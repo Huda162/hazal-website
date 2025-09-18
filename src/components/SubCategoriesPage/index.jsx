@@ -80,7 +80,6 @@ export default function SubCategoriesPage() {
     setUrl(`filter_products?category_id=${param.id}&page=${currentPage}`);
     applyFilters();
   }, [param.id]);
-  
 
   useEffect(() => {
     applyFilters();
@@ -136,7 +135,7 @@ export default function SubCategoriesPage() {
           breadcrumb={[
             { name: t("Home Page"), path: "/" },
             { name: t("Categories"), path: "/all-categories" },
-            { name: t("SubCategories"), path: "/sub-categories" },
+            { name: t("SubCategories"), path: "" },
           ]}
         />
         {loading ? (
@@ -153,7 +152,6 @@ export default function SubCategoriesPage() {
             <div className="products-page-wrapper w-full">
               {data && data.categories?.length > 0 && (
                 <>
-                  <PageTitle title={t("SubCategories")} solid />
                   <div className="breadcrumb-wrapper w-full mt-[30px]">
                     <div className="categories-section-wrapper w-full mt-[30px]">
                       <div className="container-x mx-auto">
@@ -201,92 +199,101 @@ export default function SubCategoriesPage() {
                 </>
               )}
               <br />
-              {/* <PageTitle title={t("CategoryProducts")} /> */}
-              <PageTitle title={t("CategoryProducts")} solid />
-              {loadProducts ? (
-                <div style={{ height: "100vh" }}>
-                  <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
-                    <span className="sr-only">Loading...</span>
-                    <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                    <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.1s]"></div>
-                    <div className="h-8 w-8 bg-main-color rounded-full animate-bounce"></div>
-                  </div>{" "}
-                </div>
-              ) : (
+              {data.categories?.length === 0 && (
                 <>
-                  {data2.data && data2?.data?.length > 0 ? (
-                    <div className="w-full lg:flex lg:space-x-[30px] mb-3">
-                      <FilterBar
-                        minValue={minVal}
-                        maxValue={maxVal}
-                        selectedValue={selectedValue}
-                        setValue={setValue}
-                        sortKeys={sortKeys}
-                        checkKey={checkKey}
-                        setSortKey={setSortKey}
-                        applyFilters={() => applyFilters()}
-                        // withCategories={true}
-                        // mainCategory={param.id}
-                        // categories={data?.categories}
-                        // handleCategorySelect={handleCategorySelect}
-                        // selectedCategory={selectedCategory}
-                      />
-                      <div className="flex-1">
-                        <div className="grid xl:grid-cols-4 lg:grid-cols-4 sm:grid-cols-2 grid-cols-2 xl:gap-[30px] gap-5">
-                          {products?.data && products?.data?.length > 0 ? (
-                            <>
-                              <DataIteration
-                                datas={products?.data}
-                                startLength={0}
-                                endLength={products?.data?.length}
-                              >
-                                {({ datas }) => (
-                                  <div   key={datas.id}>
-                                    <ProductCardStyleThree datas={datas} />
+                  {loadProducts ? (
+                    <div style={{ height: "100vh" }}>
+                      <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
+                        <span className="sr-only">Loading...</span>
+                        <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                        <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.1s]"></div>
+                        <div className="h-8 w-8 bg-main-color rounded-full animate-bounce"></div>
+                      </div>{" "}
+                    </div>
+                  ) : (
+                    <>
+                      {data2.data && data2?.data?.length > 0 ? (
+                        <div className="w-full lg:flex lg:space-x-[30px] mb-3">
+                          <FilterBar
+                            minValue={minVal}
+                            maxValue={maxVal}
+                            selectedValue={selectedValue}
+                            setValue={setValue}
+                            sortKeys={sortKeys}
+                            checkKey={checkKey}
+                            setSortKey={setSortKey}
+                            applyFilters={() => applyFilters()}
+                            // withCategories={true}
+                            // mainCategory={param.id}
+                            // categories={data?.categories}
+                            // handleCategorySelect={handleCategorySelect}
+                            // selectedCategory={selectedCategory}
+                          />
+                          {data.categories?.length === 0 && (
+                            <div className="flex-1">
+                              <div className="grid xl:grid-cols-4 lg:grid-cols-4 sm:grid-cols-2 grid-cols-2 xl:gap-[30px] gap-5">
+                                {products?.data &&
+                                products?.data?.length > 0 ? (
+                                  <>
+                                    <DataIteration
+                                      datas={products?.data}
+                                      startLength={0}
+                                      endLength={products?.data?.length}
+                                    >
+                                      {({ datas }) => (
+                                        <div key={datas.id}>
+                                          <ProductCardStyleThree
+                                            datas={datas}
+                                          />
+                                        </div>
+                                      )}
+                                    </DataIteration>
+                                  </>
+                                ) : (
+                                  <div lassName="products-page-wrapper w-full flex align-center justify-center">
+                                    <div className="container-x mx-auto mt-[90px] mb-[90px]">
+                                      <div className="flex flex-col items-center justify-center h-full">
+                                        <img src={image} alt="" width={250} />
+                                        <p className="text-lg text-gray-500">
+                                          {t("no data found")}
+                                        </p>
+                                        <p className="text-sm text-gray-400 m-3">
+                                          <button
+                                            onClick={() => {
+                                              setValue([minVal, maxVal]);
+                                              setSortKey("");
+                                              applyFilters();
+                                            }}
+                                          >
+                                            {t("click here to reset filters")}
+                                          </button>
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 )}
-                              </DataIteration>
-                            </>
-                          ) : (
-                            <div lassName="products-page-wrapper w-full flex align-center justify-center">
-                              <div className="container-x mx-auto mt-[90px] mb-[90px]">
-                                <div className="flex flex-col items-center justify-center h-full">
-                                  <img src={image} alt="" width={250}/>
-                                  <p className="text-lg text-gray-500">
-                                    {t("no data found")}
-                                  </p>
-                                  <p className="text-sm text-gray-400 m-3">
-                                    <button
-                                      onClick={() => {
-                                        setValue([minVal, maxVal]);
-                                        setSortKey("");
-                                        applyFilters();
-                                      }}
-                                    >
-                                      {t("click here to reset filters")}
-                                    </button>
-                                  </p>
-                                </div>
                               </div>
+                              <Pagination
+                                links={products.links}
+                                handlePageClick={handlePageClick}
+                              />
                             </div>
                           )}
                         </div>
-                        <Pagination
-                          links={products.links}
-                          handlePageClick={handlePageClick}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <img src={image} alt="" width={250}/>
-                      <p className="text-lg text-gray-500">
-                        لا يوجد بيانات لعرضها
-                      </p>
-                      <p className="text-sm text-gray-400 m-3">
-                        <Link to="/">اضغط هنا للعودة إلى الصفحة الرئيسية</Link>
-                      </p>
-                    </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-full">
+                          <img src={image} alt="" width={250} />
+                          <p className="text-lg text-gray-500">
+                            لا يوجد بيانات لعرضها
+                          </p>
+                          <p className="text-sm text-gray-400 m-3">
+                            <Link to="/">
+                              اضغط هنا للعودة إلى الصفحة الرئيسية
+                            </Link>
+                          </p>
+                        </div>
+                      )}
+                    </>
                   )}
                 </>
               )}

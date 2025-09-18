@@ -37,7 +37,7 @@ export default function Footer() {
           <div className="lg:w-2/10 w-full mb-10 lg:mb-0 ">
             <div className="mb-5">
               <h6 className="text-[18] font-bold text-[white]">
-                Hazal Electronic Marketing
+                Hazal
               </h6>
             </div>
             <div>

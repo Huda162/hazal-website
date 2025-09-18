@@ -8,8 +8,8 @@ import foundation from "../../../public/assets/images/foundation3.webp";
 export default function PageTitle({ title, breadcrumb = [], solid = false }) {
   return (
     <div
-      className={`page-title-wrapper relative w-full bg-gradient-to-b from-main-color/20 to-primarygray ${
-        solid ? "h-[100px] py-2" : "h-[150px] py-4"
+      className={`page-title-wrapper relative w-full ${
+        solid ? "h-[100px] py-2" : "h-[150px] py-4 bg-gradient-to-b from-main-color/20 to-primarygray"
       }  overflow-hidden`}
     >
       {solid ? (
