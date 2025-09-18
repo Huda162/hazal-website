@@ -3,7 +3,7 @@ import ThinBag from "../../../Helpers/icons/ThinBag";
 import Middlebar from "./Middlebar";
 import Navbar from "./Navbar";
 import TopBar from "./TopBar";
-import logo from "../../../../../public/assets/images/logo-white.png";
+import logo from "../../../../../public/assets/images/logo.png";
 import { useSelector } from "react-redux";
 import { useCartDrawer } from "../../../../context/CartDrawerContext";
 
@@ -40,7 +40,7 @@ export default function HeaderTwo({ className, drawerAction }) {
           </div>
           <div>
             <Link to="/">
-              <img width="75" height="36" src={logo} alt="logo" />
+              <img width="40" height="36" src={logo} alt="logo" />
             </Link>
           </div>
           <div className="cart relative cursor-pointer">

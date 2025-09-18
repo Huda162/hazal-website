@@ -7,7 +7,7 @@ import ThinPeople from "../../../Helpers/icons/ThinPeople";
 import SearchBox from "../../../Helpers/SearchBox";
 import { Link } from "react-router-dom";
 import i18n from "i18next";
-import logo from "../../../../../public/assets/images/logo-white.png";
+import logo from "../../../../../public/assets/images/logo.png";
 import { useState } from "react";
 import Selectbox from "../../../Helpers/Selectbox";
 import Arrow from "../../../Helpers/icons/Arrow";
@@ -67,7 +67,7 @@ export default function Middlebar({ className }) {
           <div className="flex justify-between items-center h-full">
             <div className="mx-3">
               <Link to="/">
-                <img width="80" src={logo} alt="logo" />
+                <img width="40" src={logo} alt="logo" />
               </Link>
             </div>
             <div className="nav">
