@@ -35,6 +35,7 @@ import {
 import axios from "axios";
 import useFetchData from "../../hooks/fetchData";
 import "../../index.css";
+import { Spinner } from "@material-tailwind/react";
 
 const notifyAdd = () =>
   toast(t("order confirmed successfully"), {
@@ -122,6 +123,7 @@ export default function CheakoutPage() {
   const [debounceTimeout, setDebounceTimeout] = useState(null);
   const [discount, setDiscount] = useState(0);
   const [loadCode, setLoadCode] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const handleCodeChange = (e) => {
     const value = e.target.value;
@@ -207,6 +209,7 @@ export default function CheakoutPage() {
   };
 
   const handleSubmitOrder = async () => {
+    setLoadingSubmit(true)
     const requiredFields = [];
     if (!name) {
       requiredFields.push(t("Name"));
@@ -297,6 +300,7 @@ export default function CheakoutPage() {
   };
 
   const handleAddOrder = async () => {
+    setLoadingSubmit(true);
     const fullPhone = "05" + phone;
 
     localStorage.setItem("form_phone", phone);
@@ -775,15 +779,24 @@ export default function CheakoutPage() {
                       {t("phone number must start with 05")}
                     </div>
                   )}
-                  <div
-                    className="w-full h-[50px] black-btn flex justify-center items-center cursor-pointer"
+                  <button
+                    className={`w-full h-[50px] ${
+                      loadingSubmit ? "bg-qgray" : "black-btn"
+                    } flex justify-center items-center cursor-pointer`}
                     onClick={handleSubmitOrder}
+                    disabled={loadingSubmit}
                   >
                     <span className="text-sm font-semibold">
                       {" "}
-                      {t("Confirmation")}
+                      {loadingSubmit ? (
+                        <>
+                          <Spinner />
+                        </>
+                      ) : (
+                        <>{t("Confirmation")}</>
+                      )}
                     </span>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

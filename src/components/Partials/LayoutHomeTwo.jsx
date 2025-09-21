@@ -10,16 +10,122 @@ import ThinBag from "../Helpers/icons/ThinBag";
 import { CartDrawer } from "../Helpers/CartDrawer";
 import { useCartDrawer } from "../../context/CartDrawerContext";
 import useFetchData from "../../hooks/fetchData";
+import { useTranslation } from "react-i18next";
 
 export default function LayoutHomeTwo({ children, childrenClasses }) {
   const [drawer, setDrawer] = useState(false);
+  const [showMobileAlert, setShowMobileAlert] = useState(false);
+  const [deviceType, setDeviceType] = useState(null);
   const { isCartOpen } = useCartDrawer();
   const cart = useSelector((state) => state.cart.value);
   const location = useLocation();
   const { data, loading } = useFetchData("socials");
 
+  useEffect(() => {
+    // Check if user is on a mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Detect specific device type
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        setDeviceType("ios");
+      } else if (/Android/i.test(navigator.userAgent)) {
+        setDeviceType("android");
+      }
+
+      setShowMobileAlert(true);
+    }
+  }, []);
+
+  const closeAlert = () => {
+    setShowMobileAlert(false);
+  };
+
+  const { t } = useTranslation();
+
   return (
     <>
+      {/* Mobile App Download Alert */}
+      {showMobileAlert && (
+        <div
+          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-md
+                  bg-gradient-to-r from-secondary-color/95 to-main-color/85 rounded-2xl shadow-lg 
+                  border border-main-color p-4 flex items-center justify-between animate-slide-up"
+        >
+          {/* Left section: icon + text */}
+          <div className="flex items-center gap-2">
+            <div className="mr-3 bg-secondary-color shadow p-2 rounded-full">
+              {deviceType === "ios" ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  fill="#ffffffe6"
+                  viewBox="0 0 256 256"
+                >
+                  <path d="M64.34,196.07l-9.45,16a8,8,0,1,1-13.78-8.14l9.46-16a8,8,0,1,1,13.77,8.14ZM232,152H184.2l-30.73-52a8,8,0,1,0-13.77,8.14l61.41,103.93a8,8,0,0,0,13.78-8.14L193.66,168H232a8,8,0,0,0,0-16Zm-89.53,0H90.38L158.89,36.07a8,8,0,0,0-13.78-8.14L128,56.89l-17.11-29a8,8,0,1,0-13.78,8.14l21.6,36.55L71.8,152H24a8,8,0,0,0,0,16H142.47a8,8,0,1,0,0-16Z"></path>
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  fill="#ffffffe6"
+                  viewBox="0 0 256 256"
+                >
+                  <path d="M239.82,114.19,72,18.16a16,16,0,0,0-16.12,0A15.68,15.68,0,0,0,48,31.87V224.13a15.68,15.68,0,0,0,7.92,13.67,16,16,0,0,0,16.12,0l167.78-96a15.75,15.75,0,0,0,0-27.62ZM64,212.67V43.33L148.69,128Zm96-73.36,18.92,18.92-88.5,50.66ZM90.4,47.1l88.53,50.67L160,116.69ZM193.31,150l-22-22,22-22,38.43,22Z"></path>
+                </svg>
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">
+                {t("download_app_title")}
+              </p>
+              <p className="text-xs text-white/70 mt-1">
+                {deviceType === "ios"
+                  ? t("download_app_ios")
+                  : t("download_app_android")}
+              </p>
+            </div>
+          </div>
+
+          {/* Right section: buttons */}
+          <div className="flex items-center gap-2">
+            <a
+              href={
+                deviceType === "ios"
+                  ? "https://apps.apple.com/il/app/hazal/id6752721147"
+                  : "https://play.google.com/store/apps/details?id=hazal.perfect.com"
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/90 hover:bg-white text-main-color text-xs font-medium py-2 px-3 rounded-lg shadow-sm mr-2 transition"
+            >
+              {t("download")}
+            </a>
+            <button
+              onClick={closeAlert}
+              className="text-gray-400 hover:text-gray-600 transition"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Rest of your layout component */}
       {location.pathname === "/cart" || location.pathname === "/checkout" ? (
         <>
           <Drawer open={drawer} action={() => setDrawer(!drawer)} />

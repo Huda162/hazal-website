@@ -163,5 +163,9 @@
     "discount":"Discount",
     "Coupon is valid": "Code Is Valid",
     "Copon Code": "Discount Code",
-    "Coupon not found": "Invalid Code"
+    "Coupon not found": "Invalid Code",
+    "download_app_title": "Download our app for a better experience!",
+    "download_app_ios": "Available on the App Store",
+    "download_app_android": "Get it on Google Play",
+    "download": "Download"
 }

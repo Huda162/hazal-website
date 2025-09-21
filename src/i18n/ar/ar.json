@@ -167,5 +167,9 @@
     "discount":"الخصم",
     "Coupon is valid": "الرمز يعمل",
     "Copon Code": "رمز الخصم",
-    "Coupon not found": "الرمز لا يعمل"
+    "Coupon not found": "الرمز لا يعمل",
+    "download_app_title": " قم بتنزيل تطبيقنا لتجربة أفضل!",
+    "download_app_ios": "متاح على متجر App Store",
+    "download_app_android": "احصل عليه من Google Play",
+    "download": "تنزيل"
 }

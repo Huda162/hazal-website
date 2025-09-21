@@ -161,8 +161,12 @@
     "Only": "נשארו רק",
     "left": "",
     "In stock": "במלאי",
-    "discount":"الخصم",
-    "Coupon is valid": "الرمز يعمل",
-    "Copon Code": "رمز الخصم",
-    "Coupon not found": "الرمز لا يعمل"
+    "Coupon is valid": "הקופון תקף",
+    "Copon Code": "קוד קופון",
+    "Coupon not found": "הקופון לא נמצא",
+    "discount": "הנחה",
+    "download_app_title": "הורד את האפליקציה שלנו לחוויית שימוש טובה יותר!",
+    "download_app_ios": "זמין ב־App Store",
+    "download_app_android": "הורד מ־Google Play",
+    "download": "הורדה"
 }
