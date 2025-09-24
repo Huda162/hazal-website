@@ -339,7 +339,7 @@ export default function Drawer({ className, open, action }) {
               <div class="bg-white w-full h-auto py-8 flex items-center justify-center gap-2 flex-wrap">
                 <div className="my-1">
                   <a
-                    href={data2?.socials?.[1]?.url}
+                    href={data2?.socials?.[0]?.url}
                     class="p-2 rounded-lg flex items-center border border-gray-300 justify-center transition-all duration-500 hover:border-gray-100 hover:bg-gray-100"
                   >
                     <svg
@@ -356,7 +356,7 @@ export default function Drawer({ className, open, action }) {
                     </svg>
                   </a>
                 </div>
-                <div className="my-1">
+                {/* <div className="my-1">
                   <a
                     href={data2?.socials?.[0]?.url}
                     class="p-2 rounded-lg flex items-center border border-gray-300 justify-center transition-all duration-500 hover:border-gray-100 hover:bg-gray-100"
@@ -374,10 +374,10 @@ export default function Drawer({ className, open, action }) {
                       />
                     </svg>
                   </a>
-                </div>
+                </div> */}
                 <div className="my-1">
                   <a
-                    href={`https://api.whatsapp.com/send?phone=${data2?.socials?.[2]?.url}`}
+                    href={`https://api.whatsapp.com/send?phone=972549060041`}
                     class="p-2 rounded-lg flex items-center border border-gray-300 justify-center transition-all duration-500 hover:border-gray-100 hover:bg-gray-100"
                   >
                     <svg
