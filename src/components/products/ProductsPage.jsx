@@ -6,7 +6,7 @@ import DataIteration from "../Helpers/DataIteration";
 import Layout from "../Partials/Layout";
 import LayoutHomeTwo from "../Partials/LayoutHomeTwo";
 import useFetchData from "../../hooks/fetchData";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCardStyleThree from "../Helpers/Cards/ProductCardStyleThree";
 import image from "../../../public/assets/images/saller-7.png";
 import { useSelector } from "react-redux";
@@ -20,10 +20,19 @@ import FilterDialog from "../FilterBar/FilterDialog";
 
 export default function ProductsPage() {
   const param = useParams();
-  const [currentPage, setCurrentPage] = useState(1);
-  const { data: data2, loading: loading2 } = useFetchData(
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const [currentPage, setCurrentPage] = useState(pageParam ? parseInt(pageParam) : 1);  const { data: data2, loading: loading2 } = useFetchData(
     `filter_products?page=${currentPage}`
   );
+  useEffect(() => {
+    handlePageClick(currentPage)
+  }, [currentPage])
+
+  const onPageChange = (page) => {
+    setSearchParams({ page: page.toString() });
+    handlePageClick(page);
+  };
   const [sortKeys, setSortKeys] = useState({
     most_ordered: false,
     sort_asc: false,
@@ -168,7 +177,7 @@ export default function ProductsPage() {
                       >
                         {({ datas }) => (
                           <div   key={datas.id}>
-                            <ProductCardStyleThree datas={datas} />
+                            <ProductCardStyleThree datas={datas} currentPage={currentPage}/>
                           </div>
                         )}
                       </DataIteration>
@@ -200,7 +209,7 @@ export default function ProductsPage() {
               </div>
               <Pagination
                 links={products.links}
-                handlePageClick={handlePageClick}
+                handlePageClick={onPageChange}
               />
             </div>
           </div>

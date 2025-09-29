@@ -42,8 +42,7 @@ import { useCartDrawer } from "../../../context/CartDrawerContext";
 import out_of_stock from "../../../../public/assets/images/out-of-stock.png";
 import cart_add from "../../../../public/assets/images/cart-add.png";
 
-
-function ProductCardStyleThree({ datas }) {
+function ProductCardStyleThree({ datas, currentPage }) {
   const dispatch = useDispatch();
   const [isOpenDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -243,7 +242,10 @@ function ProductCardStyleThree({ datas }) {
               ))}
             </div>
           )}
-          <Link to={`/single-product/${datas.id}`}>
+          <Link
+            to={`/single-product/${datas.id}`}
+            state={{ fromPage: currentPage }}
+          >
             <div className="rounded-lg text-center">
               {images.length > 1 ? (
                 <Slider
@@ -282,7 +284,10 @@ function ProductCardStyleThree({ datas }) {
             className="add-cart-btn absolute w-full h-10 px-[15px] left-0 -bottom-10 group-hover:bottom-3 transition-all duration-300 ease-in-out sm:none"
           ></div> */}
         </div>
-        <Link to={`/single-product/${datas.id}`}>
+        <Link
+          to={`/single-product/${datas.id}`}
+          state={{ fromPage: currentPage }}
+        >
           <h2 className="xl:text-xl text-center md:text-lg leading-6 font-medium text-main-color mb-2 mt-[5px] mr-2 hover:text-main-color cursor-pointer flex items-center justify-center font-semibold">
             {lang === "ar" && (
               <>
@@ -460,6 +465,7 @@ function ProductCardStyleThree({ datas }) {
             <span>
               <Link
                 to={`/single-product/${datas.id}`}
+                state={{ fromPage: currentPage }}
                 className="dialogStyle underline-offset-2  hover:underline-offset-8 transition-all duration-300 underline text-sm text-qgray"
               >
                 {t("show product")}...
@@ -468,49 +474,49 @@ function ProductCardStyleThree({ datas }) {
           </div>
         </DialogTitle>
         <DialogContent>
-        {datas?.product_sizes?.length > 0 && (
+          {datas?.product_sizes?.length > 0 && (
             <div>
               <div className="mt-[1rem] font-bold">{t("sizes")}:</div>
               <div className="mt-[1rem] mb-2">
                 <div className="flex flex-wrap gap-2">
-                {datas?.product_sizes.length > 0 && (
-              <div>
-                <div className="mt-[1rem]">{t("sizes")}:</div>
+                  {datas?.product_sizes.length > 0 && (
+                    <div>
+                      <div className="mt-[1rem]">{t("sizes")}:</div>
 
-                <div className="mt-[1rem] mb-2">
-                  <div className="flex flex-wrap gap-2">
-                    {datas.product_sizes.map((item, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        className={`min-w-[40px] px-3 py-1 text-sm md:text-base font-normal uppercase tracking-wider rounded border transition-colors
+                      <div className="mt-[1rem] mb-2">
+                        <div className="flex flex-wrap gap-2">
+                          {datas.product_sizes.map((item, index) => (
+                            <button
+                              key={index}
+                              type="button"
+                              className={`min-w-[40px] px-3 py-1 text-sm md:text-base font-normal uppercase tracking-wider rounded border transition-colors
           ${
             selectedSize === item.size
               ? "border-qblack text-qblack bg-gray-100"
               : "border-gray-200 text-gray-700 hover:bg-gray-50"
           }`}
-                        onClick={() => {
-                          setSelectedSize(item.size);
-                          if (datas?.is_offer === "true") {
-                            setSelectedPrice(
-                              item.size_price_nis -
-                                (item.size_price_nis *
-                                  datas.discount_percentage) /
-                                  100
-                            );
-                            setActualPrice(item.size_price_nis);
-                          } else {
-                            setSelectedPrice(item.size_price_nis);
-                          }
-                        }}
-                      >
-                        {item.size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+                              onClick={() => {
+                                setSelectedSize(item.size);
+                                if (datas?.is_offer === "true") {
+                                  setSelectedPrice(
+                                    item.size_price_nis -
+                                      (item.size_price_nis *
+                                        datas.discount_percentage) /
+                                        100
+                                  );
+                                  setActualPrice(item.size_price_nis);
+                                } else {
+                                  setSelectedPrice(item.size_price_nis);
+                                }
+                              }}
+                            >
+                              {item.size}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

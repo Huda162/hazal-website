@@ -6,7 +6,7 @@ import DataIteration from "../Helpers/DataIteration";
 import Layout from "../Partials/Layout";
 import LayoutHomeTwo from "../Partials/LayoutHomeTwo";
 import useFetchData from "../../hooks/fetchData";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCardStyleThree from "../Helpers/Cards/ProductCardStyleThree";
 import Selectbox from "../Helpers/Selectbox";
 import { useTranslation } from "react-i18next";
@@ -30,7 +30,19 @@ import FilterDialog from "../FilterBar/FilterDialog";
 export default function SubCategoriesPage() {
   const param = useParams();
   const { data, loading } = useFetchData(`sub_categories/${param.id}`);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const [currentPage, setCurrentPage] = useState(
+    pageParam ? parseInt(pageParam) : 1
+  );
+  useEffect(() => {
+    handlePageClick(currentPage)
+  }, [currentPage])
+
+  const onPageChange = (page) => {
+    setSearchParams({ page: page.toString() });
+    handlePageClick(page);
+  };
   const [selectedCategory, setSelectedCategory] = useState(param.id);
   const [sortKeys, setSortKeys] = useState({
     most_ordered: false,
@@ -244,6 +256,7 @@ export default function SubCategoriesPage() {
                                         <div key={datas.id}>
                                           <ProductCardStyleThree
                                             datas={datas}
+                                            currentPage={currentPage}
                                           />
                                         </div>
                                       )}
@@ -275,8 +288,8 @@ export default function SubCategoriesPage() {
                               </div>
                               <Pagination
                                 links={products.links}
-                                handlePageClick={handlePageClick}
-                              />
+                                handlePageClick={onPageChange}
+                                />
                             </div>
                           )}
                         </div>

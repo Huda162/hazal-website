@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import productDatas from "../../data/products.json";
 import BreadcrumbCom from "../BreadcrumbCom";
 import ProductCardStyleOne from "../Helpers/Cards/ProductCardStyleOne";
@@ -6,7 +6,7 @@ import DataIteration from "../Helpers/DataIteration";
 import Layout from "../Partials/Layout";
 import LayoutHomeTwo from "../Partials/LayoutHomeTwo";
 import useFetchData from "../../hooks/fetchData";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCardStyleThree from "../Helpers/Cards/ProductCardStyleThree";
 import { useSelector } from "react-redux";
 import PageTitle from "../Helpers/PageTitle";
@@ -15,13 +15,21 @@ import Pagination from "../Helpers/Pagination";
 
 export default function Offers() {
   const param = useParams();
-  const [currentPage, setCurrentPage] = useState(1);
-  const { data, loading } = useFetchData(`products_offers?${currentPage}`);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const [currentPage, setCurrentPage] = useState(pageParam ? parseInt(pageParam) : 1);  const { data, loading } = useFetchData(`products_offers?${currentPage}`);
   console.log(data, "data");
   const cart = useSelector((state) => state.cart.value);
   const lang = localStorage.getItem("i18nextLng");
   const { t } = useTranslation();
+  useEffect(() => {
+    handlePageClick(currentPage)
+  }, [currentPage])
 
+  const onPageChange = (page) => {
+    setSearchParams({ page: page.toString() });
+    handlePageClick(page);
+  };
   const handlePageClick = (page) => {
     setCurrentPage(page);
   };
@@ -62,7 +70,7 @@ export default function Offers() {
                     >
                       {({ datas }) => (
                         <div   key={datas.id}>
-                          <ProductCardStyleThree datas={datas} />
+                          <ProductCardStyleThree datas={datas} currentPage={currentPage}/>
                         </div>
                       )}
                     </DataIteration>
@@ -72,8 +80,8 @@ export default function Offers() {
             </div>
             <Pagination
               links={data.products.links}
-              handlePageClick={handlePageClick}
-            />
+              handlePageClick={onPageChange}
+              />
           </div>
         ) : (
           <div lassName="products-page-wrapper w-full">
