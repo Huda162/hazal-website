@@ -95,27 +95,35 @@ export default function CheakoutPage() {
   const [near, setNear] = useState(localStorage.getItem("form_near") || "");
   const [note, setNote] = useState("");
   const [name, setName] = useState(localStorage.getItem("form_name") || "");
+  const [email, setEmail] = useState(localStorage.getItem("form_email") || "");
+  const [paymentMethod, setPaymentMethod] = useState(
+    localStorage.getItem("form_payment_method") || 'cash'
+  );
   const [shippingCost, setShippingCost] = useState(
     JSON.parse(localStorage.getItem("form_shippingcost")) || ""
   );
   const [errorMessage, setErrorMessage] = useState("");
   const [emptyPhone, setEmptyPhone] = useState(false);
   const [emptyName, setEmptyName] = useState(false);
+  const [emptyEmail, setEmptyEmail] = useState(false);
   const [emptyCity, setEmptyCity] = useState(false);
   const [emptyNear, setEmptyNear] = useState(false);
   const [emptyArea, setEmptyArea] = useState(false);
+  const [emptyPaymentMethod, setEmptyPaymentMethod] = useState(false);
   const [emptyShippingCost, setEmptyShippingCost] = useState(false);
   const [fillPhone, setfillPhone] = useState(false);
   const [fillName, setfillName] = useState(false);
+  const [fillEmail, setfillEmail] = useState(false);
   const [fillCity, setfillCity] = useState(false);
   const [fillNear, setfillNear] = useState(false);
   const [fillArea, setfillArea] = useState(false);
+  const [fillPaymentMethod, setfillPaymentMethod] = useState(false);
   const [fillShippingCost, setfillShippingCost] = useState(false);
   const [password, setPassword] = useState("123");
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [phoneExist, setPhoneExist] = useState(false);
   const [loginRequiredModal, setLoginRequiredModal] = useState(false);
-  const log_status = JSON.parse(localStorage.getItem("action_log_status"));
+  const log_status = JSON.parse(localStorage.getItem("hazal_log_status"));
   const [phoneIncorrect, setPhoneIncorrect] = useState(false);
   const [coponCode, setCoponCode] = useState("");
   const [coponId, setCoponId] = useState(0);
@@ -141,7 +149,7 @@ export default function CheakoutPage() {
 
     setDebounceTimeout(newTimeout);
   };
-  const token = JSON.parse(localStorage.getItem("action_access_token"));
+  const token = JSON.parse(localStorage.getItem("hazal_access_token"));
 
   const checkCoupon = async (coupon) => {
     try {
@@ -209,7 +217,7 @@ export default function CheakoutPage() {
   };
 
   const handleSubmitOrder = async () => {
-    setLoadingSubmit(true)
+    setLoadingSubmit(true);
     const requiredFields = [];
     if (!name) {
       requiredFields.push(t("Name"));
@@ -231,11 +239,20 @@ export default function CheakoutPage() {
       requiredFields.push(t("Area (Interior, Jerusalem, West Bank)"));
       setEmptyShippingCost(true);
     }
+    if (!email) {
+      requiredFields.push(t("Email"));
+      setEmptyEmail(true);
+    }
+    if (!paymentMethod) {
+      requiredFields.push(t("payment method"));
+      setEmptyPaymentMethod(true);
+    }
     if (requiredFields.length > 0) {
       const errorMessage = `${t(
         "Please fill out the following fields"
       )}   : ${requiredFields.join(", ")}`;
       setErrorMessage(errorMessage);
+      setLoadingSubmit(false)
     } else {
       try {
         const response = await axios.get(
@@ -277,7 +294,13 @@ export default function CheakoutPage() {
     if (area) {
       setfillArea(true);
     }
-  }, [name, phone, city, near, shippingCost, area]);
+    if (email) {
+      setfillEmail(true);
+    }
+    if (paymentMethod) {
+      setfillPaymentMethod(true);
+    }
+  }, [name, phone, city, near, shippingCost, area, email, paymentMethod]);
 
   const handleAddAccount = async () => {
     const fullPhone = "05" + phone;
@@ -286,7 +309,8 @@ export default function CheakoutPage() {
     formData.append("phone", fullPhone);
     formData.append("password", password);
     formData.append("name", name);
-    formData.append("email", "");
+    formData.append("email", email);
+    formData.append("payment_method", paymentMethod);
     formData.append("role_id", 2);
 
     const resGet = await axios
@@ -308,6 +332,8 @@ export default function CheakoutPage() {
     localStorage.setItem("form_city", city);
     localStorage.setItem("form_area", area);
     localStorage.setItem("form_near", near);
+    localStorage.setItem("form_email", email);
+    localStorage.setItem("form_payment_method", paymentMethod);
     localStorage.setItem("form_shippingcost", JSON.stringify(shippingCost));
     const formData = new FormData();
     const sum = cart?.reduce(
@@ -321,7 +347,9 @@ export default function CheakoutPage() {
     formData.append("area", area);
     formData.append("near", near);
     formData.append("note", note);
-    formData.append("user_id", JSON.parse(localStorage.getItem("action_id")));
+    formData.append("email", email);
+    formData.append("payment_method", paymentMethod);
+    formData.append("user_id", JSON.parse(localStorage.getItem("hazal_id")));
     if (markerPosition && markerPosition.lat && markerPosition.lng) {
       formData.append("lattitude", markerPosition.lat);
       formData.append("longitude", markerPosition.lng);
@@ -355,7 +383,9 @@ export default function CheakoutPage() {
       setCity("");
       setNear("");
       setNote("");
+      setEmail("");
       setName("");
+      setPaymentMethod("");
       {
         lang === "ar"
           ? notifyConfirmOrderAr()
@@ -397,10 +427,10 @@ export default function CheakoutPage() {
         const token = response.data.access_token;
         const status = response.data.status;
         const { name, id } = response.data.id;
-        localStorage.setItem("action_access_token", JSON.stringify(token));
-        localStorage.setItem("action_name", JSON.stringify(name));
-        localStorage.setItem("action_id", JSON.stringify(id));
-        localStorage.setItem("action_log_status", JSON.stringify(status));
+        localStorage.setItem("hazal_access_token", JSON.stringify(token));
+        localStorage.setItem("hazal_name", JSON.stringify(name));
+        localStorage.setItem("hazal_id", JSON.stringify(id));
+        localStorage.setItem("hazal_log_status", JSON.stringify(status));
         handleAddOrder();
       } else {
         console.log("Invalid login details");
@@ -468,7 +498,7 @@ export default function CheakoutPage() {
                 <div className="form-area">
                   <form>
                     <div className="sm:flex sm:space-x-5 items-center mb-6">
-                      <div className="sm:w-1/2  mb-5 sm:mb-0 xl:ml-[20px]">
+                      <div className="sm:w-full  mb-5 sm:mb-0 xl:ml-[20px]">
                         <InputCom
                           label={t("Name")}
                           placeholder={t("Name")}
@@ -480,6 +510,22 @@ export default function CheakoutPage() {
                             setEmptyName(false);
                           }}
                           isFill={fillName}
+                        />
+                      </div>
+                    </div>
+                    <div className="sm:flex sm:space-x-5 items-center mb-6">
+                      <div className="sm:w-1/2  mb-5 sm:mb-0 xl:ml-[20px]">
+                        <InputCom
+                          label={`${t("Email")}/${t("Phone")}`}
+                          placeholder={`${t("Email")}/${t("Phone")}`}
+                          inputClasses="w-full h-[70px]"
+                          isEmpty={emptyEmail}
+                          value={email}
+                          inputHandler={(e) => {
+                            setEmail(e.target.value);
+                            setEmptyEmail(false);
+                          }}
+                          isFill={fillEmail}
                         />
                       </div>
                       <div className="flex-1">
@@ -502,10 +548,10 @@ export default function CheakoutPage() {
                     <div className="sm:flex sm:space-x-5 items-center mb-6">
                       <div className="sm:w-1/2  mb-5 sm:mb-0 xl:ml-[20px]">
                         <label className="text-qgray text-[13px] font-bold ">
+                          {t("Select a region")}
                           <span style={{ color: "red", fontSize: "1rem" }}>
                             *
                           </span>
-                          {t("Select a region")}
                         </label>
                         <div
                           className={`input-wrapper border ${
@@ -595,6 +641,47 @@ export default function CheakoutPage() {
                           isEmpty={emptyNear}
                           isFill={fillNear}
                         />
+                      </div>
+                    </div>
+                    <div className="sm:flex sm:space-x-5 items-center mb-6">
+                      <div className="sm:w-full  mb-5 sm:mb-0 xl:ml-[20px]">
+                        <label className="text-qgray text-[13px] font-bold ">
+                          {t("select a payment method")}
+                          <span style={{ color: "red", fontSize: "1rem" }}>
+                            *
+                          </span>
+                        </label>
+                        <div
+                          className={`input-wrapper border ${
+                            emptyPaymentMethod
+                              ? "bg-[#faeaeb] transition-all duration-300"
+                              : fillPaymentMethod
+                              ? "bg-[#ddf9e2]"
+                              : "border-gray-400"
+                          } w-full h-full overflow-hidden relative rounded mt-[10px]`}
+                        >
+                          <select
+                            onChange={(e) => {
+                              setPaymentMethod(e.target.value);
+                              setEmptyPaymentMethod(false);
+                            }}
+                            value={paymentMethod}
+                            id="paymentMethod"
+                            className={`input-field placeholder:text-sm text-sm px-6 text-dark-gray w-full h-full font-normal ${
+                              emptyPaymentMethod
+                                ? "bg-[#faeaeb]"
+                                : fillPaymentMethod
+                                ? "bg-[#ddf9e2]"
+                                : "bg-white"
+                            }  focus:ring-0 focus:outline-none`}
+                          >
+                            <option disabled selected>
+                              {t("select a payment method")}
+                            </option>
+                            <option value="visa">{t("visa")}</option>
+                            <option value="cash">{t("cash")}</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                     <div className="sm:flex sm:space-x-5 items-center mb-6">

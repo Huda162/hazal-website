@@ -3,6 +3,7 @@ import Facebook from "../../../Helpers/icons/Facebook";
 import Instagram from "../../../Helpers/icons/Instagram";
 import Youtube from "../../../Helpers/icons/Youtube";
 import logo from "../../../../../public/assets/images/logo-white.png";
+import cards from "../../../../../public/assets/images/cards.png";
 import useFetchData from "../../../../hooks/fetchData";
 import { useTranslation } from "react-i18next";
 
@@ -74,19 +75,23 @@ export default function Footer() {
             </div>
             <div>
               <ul className="flex flex-col space-y-5 ">
-                <li>
+                {/* <li>
                   <Link to="/">
                     <span className="text-[white] text-[13px] hover:text-white border-b border-transparent hover:border-white">
                       {t("Secure payment")}
                     </span>
                   </Link>
-                </li>
+                </li> */}
                 <li>
-                  <Link to="/">
+                  <Link to="/terms-and-policies">
                     <span className="text-[white] text-[13px] hover:text-white border-b border-transparent hover:border-white">
-                      {t("privacy policy")}
+                      {t("Terms and Policies")}
                     </span>
                   </Link>
+                  <div className="my-5">
+
+                  <img src={cards} alt="cards" />
+                  </div>
                 </li>
               </ul>
             </div>

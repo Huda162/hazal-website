@@ -37,9 +37,9 @@ export default function Middlebar({ className }) {
   const theme = useTheme();
   const [toggleLang, setToggleLang] = useState(false);
   const lang = localStorage.getItem("i18nextLng");
-  const logStatus = JSON.parse(localStorage.getItem("action_log_status"));
+  const logStatus = JSON.parse(localStorage.getItem("hazal_log_status"));
   console.log(logStatus === "true");
-  const storedLogo = localStorage.getItem("action_logo") || logo;
+  const storedLogo = localStorage.getItem("hazal_logo") || logo;
 
   document.body.dir = i18n.dir();
   const changeLanguage = (lng) => {

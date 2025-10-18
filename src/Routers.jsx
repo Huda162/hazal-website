@@ -55,6 +55,7 @@ export default function Routers() {
       <Route exact path="/checkout" element={<CheakoutPage />} />
       <Route exact path="/wishlist" element={<Wishlist />} />
       <Route exact path="/profile" element={<ProfilePage />} />
+      <Route exact path="/terms-and-policies" element={<PrivacyPolicy />} />
       <Route exact path="/login-customer" element={<LoginPage />} />
 
       <Route
