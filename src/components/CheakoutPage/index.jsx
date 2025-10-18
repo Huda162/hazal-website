@@ -3,7 +3,7 @@ import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
 import LayoutHomeTwo from "../Partials/LayoutHomeTwo";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   GoogleMap,
   Marker,
@@ -15,6 +15,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { clearCart } from "../../redux/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import ReCAPTCHA from "react-google-recaptcha";
 import {
   notifyConfirmOrderAr,
   notifyConfirmOrderEn,
@@ -70,6 +71,7 @@ const notifyError = () =>
       textAlign: "center",
     },
   });
+
 export default function CheakoutPage() {
   const dispatch = useDispatch();
   const [markerPosition, setMarkerPosition] = useState({ lng: 0, lat: 0 });
@@ -79,12 +81,11 @@ export default function CheakoutPage() {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyCbU4UQT_reh3zLwsTZDYLmRrpseZQUGfw" || "",
   });
-  // const handleMapClick = (event) => {
-  //   setMarkerPosition({
-  //     lng: event.latLng.lng(),
-  //     lat: event.latLng.lat(),
-  //   });
-  // };
+  
+  // reCAPTCHA ref and state
+  const recaptchaRef = useRef(null);
+  const [isRecaptchaVerified, setIsRecaptchaVerified] = useState(false);
+  const [recaptchaError, setRecaptchaError] = useState(false);
 
   const lang = localStorage.getItem("i18nextLng");
 
@@ -132,6 +133,24 @@ export default function CheakoutPage() {
   const [discount, setDiscount] = useState(0);
   const [loadCode, setLoadCode] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  // reCAPTCHA handler
+  const handleRecaptchaChange = (value) => {
+    if (value) {
+      setIsRecaptchaVerified(true);
+      setRecaptchaError(false);
+    }
+  };
+
+  const handleRecaptchaExpired = () => {
+    setIsRecaptchaVerified(false);
+    setRecaptchaError(true);
+  };
+
+  const handleRecaptchaError = () => {
+    setIsRecaptchaVerified(false);
+    setRecaptchaError(true);
+  };
 
   const handleCodeChange = (e) => {
     const value = e.target.value;
@@ -218,6 +237,15 @@ export default function CheakoutPage() {
 
   const handleSubmitOrder = async () => {
     setLoadingSubmit(true);
+    
+    // Check reCAPTCHA first
+    if (!isRecaptchaVerified) {
+      setRecaptchaError(true);
+      setErrorMessage(t("Please complete the reCAPTCHA verification"));
+      setLoadingSubmit(false);
+      return;
+    }
+
     const requiredFields = [];
     if (!name) {
       requiredFields.push(t("Name"));
@@ -252,7 +280,7 @@ export default function CheakoutPage() {
         "Please fill out the following fields"
       )}   : ${requiredFields.join(", ")}`;
       setErrorMessage(errorMessage);
-      setLoadingSubmit(false)
+      setLoadingSubmit(false);
     } else {
       try {
         const response = await axios.get(
@@ -386,6 +414,11 @@ export default function CheakoutPage() {
       setEmail("");
       setName("");
       setPaymentMethod("");
+      // Reset reCAPTCHA
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+        setIsRecaptchaVerified(false);
+      }
       {
         lang === "ar"
           ? notifyConfirmOrderAr()
@@ -684,11 +717,13 @@ export default function CheakoutPage() {
                         </div>
                       </div>
                     </div>
+                    
+                    
+
                     <div className="sm:flex sm:space-x-5 items-center mb-6">
                       <div className="sm:w-full mb-5 sm:mb-0 xl:ml-[20px]">
                         <InputCom
                           label={t("Copon Code")}
-                          // placeholder={t("copon code")}
                           inputClasses="w-full h-[70px]"
                           name="copon"
                           value={coponCode}
@@ -793,35 +828,28 @@ export default function CheakoutPage() {
                   </div>
                   <div className="w-full h-[1px] bg-[#EDEDED]"></div>
                   <div className="mt-[30px]">
-                    {/* {shippingCost && ( */}
                     <div className=" flex justify-between mb-5">
                       <p className="text-xl font-medium text-qblack">
                         {t("Delivery price")}
                       </p>
-
                       <br />
-
                       <p className="text-2xl font-medium text-qred">
                         ₪{shippingCost.price}
                       </p>
                     </div>
-                    {/* )} */}
                   </div>
                   <div className="w-full h-[1px] bg-[#EDEDED]"></div>
                   <div className="mt-[30px]">
-                    {/* {shippingCost && ( */}
                     <div className=" flex justify-between mb-5">
                       <p className="text-xl font-medium text-qblack">
                         {t("discount")}
                       </p>
                       <br />
-
                       <p className="text-2xl font-medium text-qred">
                         {" "}
                         -₪{discount}
                       </p>
                     </div>
-                    {/* )} */}
                   </div>
                   <div className="w-full h-[1px] bg-[#EDEDED]"></div>
                   <div className="mt-[30px]">
@@ -850,6 +878,31 @@ export default function CheakoutPage() {
                       </div>
                     )}
                   </div>
+                  {/* reCAPTCHA Section */}
+                    <div className="sm:flex sm:space-x-5 items-center mb-6">
+                      <div className="sm:w-full mb-5 sm:mb-0 xl:ml-[20px]">
+                        <label className="text-qgray text-[13px] font-bold ">
+                          {t("Security Verification")}
+                          <span style={{ color: "red", fontSize: "1rem" }}>
+                            *
+                          </span>
+                        </label>
+                        <div className="mt-[10px]">
+                          <ReCAPTCHA
+                            ref={recaptchaRef}
+                            sitekey="6LeFru4rAAAAAFznjCATokwLTgurl4cmhUvpCwCQ" // Replace with your actual site key
+                            onChange={handleRecaptchaChange}
+                            onExpired={handleRecaptchaExpired}
+                            onErrored={handleRecaptchaError}
+                          />
+                          {recaptchaError && (
+                            <p className="text-red-600 text-sm mt-2">
+                              {t("Please complete the reCAPTCHA verification")}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   {errorMessage && (
                     <div
                       className="mb-[30px]"
@@ -871,7 +924,7 @@ export default function CheakoutPage() {
                       loadingSubmit ? "bg-qgray" : "black-btn"
                     } flex justify-center items-center cursor-pointer`}
                     onClick={handleSubmitOrder}
-                    disabled={loadingSubmit}
+                    disabled={loadingSubmit || !isRecaptchaVerified}
                   >
                     <span className="text-sm font-semibold">
                       {" "}
@@ -941,7 +994,6 @@ export default function CheakoutPage() {
             style={{
               marginTop: "1rem",
               width: "25%",
-
               padding: "0.5rem",
             }}
           >
@@ -968,7 +1020,6 @@ export default function CheakoutPage() {
             style={{
               backgroundColor: "#1d1d1d",
               marginTop: "1rem",
-              // width: "70%",
               color: "white",
               padding: "0.5rem",
               cursor: "pointer",
@@ -987,7 +1038,6 @@ export default function CheakoutPage() {
             style={{
               marginTop: "1rem",
               width: "25%",
-
               padding: "0.5rem",
             }}
           >
