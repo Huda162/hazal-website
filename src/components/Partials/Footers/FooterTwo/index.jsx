@@ -37,9 +37,7 @@ export default function Footer() {
           </div>
           <div className="lg:w-2/10 w-full mb-10 lg:mb-0 ">
             <div className="mb-5">
-              <h6 className="text-[18] font-bold text-[white]">
-                Hazal
-              </h6>
+              <h6 className="text-[18] font-bold text-[white]">Hazal</h6>
             </div>
             <div>
               <ul className="flex flex-col space-y-5 ">
@@ -89,8 +87,7 @@ export default function Footer() {
                     </span>
                   </Link>
                   <div className="my-5">
-
-                  <img src={cards} alt="cards" />
+                    <img src={cards} alt="cards" />
                   </div>
                 </li>
               </ul>

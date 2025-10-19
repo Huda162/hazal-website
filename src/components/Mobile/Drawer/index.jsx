@@ -11,6 +11,7 @@ import language from "../../../../public/assets/images/language.svg";
 import userIcon from "../../../../public/assets/images/user.png";
 import theme from "@material-tailwind/react/theme";
 import SearchBox from "../../Helpers/SearchBox";
+import cards from '../../../../public/assets/images/cards.png'
 
 export default function Drawer({ className, open, action }) {
   const [tab, setTab] = useState("menu");
@@ -335,6 +336,21 @@ export default function Drawer({ className, open, action }) {
                     </li>
                   </Link>
                 </li>
+                <li className="category-item">
+                  <Link to={`/terms-and-policies`}>
+                    <li className="category-item">
+                      <a href="#">
+                        <div className=" flex justify-between items-center px-5 h-10 bg-white hover:bg-qh2-green transition-all duration-300 ease-in-out cursor-pointer text-qblack hover:text-white">
+                          <div className="flex items-center space-x-6">
+                            <span className="text-md font-400">
+                              {t("Terms and Policies")}
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                  </Link>
+                </li>
               </ul>
               <div class="bg-white w-full h-auto py-8 flex items-center justify-center gap-2 flex-wrap">
                 <div className="my-1">
@@ -401,6 +417,9 @@ export default function Drawer({ className, open, action }) {
                   </a>
                 </div>
               </div>
+                <div className="my-5 w-full flex items-center justify-center">
+                    <img src={cards} alt="cards" />
+                  </div>
             </div>
           )}
         </div>
