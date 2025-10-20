@@ -81,7 +81,7 @@ export default function CheakoutPage() {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyCbU4UQT_reh3zLwsTZDYLmRrpseZQUGfw" || "",
   });
-  
+
   // reCAPTCHA ref and state
   const recaptchaRef = useRef(null);
   const [isRecaptchaVerified, setIsRecaptchaVerified] = useState(false);
@@ -98,7 +98,7 @@ export default function CheakoutPage() {
   const [name, setName] = useState(localStorage.getItem("form_name") || "");
   const [email, setEmail] = useState(localStorage.getItem("form_email") || "");
   const [paymentMethod, setPaymentMethod] = useState(
-    localStorage.getItem("form_payment_method") || 'cash'
+    localStorage.getItem("form_payment_method") || "cash"
   );
   const [shippingCost, setShippingCost] = useState(
     JSON.parse(localStorage.getItem("form_shippingcost")) || ""
@@ -235,9 +235,23 @@ export default function CheakoutPage() {
     }
   };
 
+  const [emailError, setEmailError] = useState(false)
+  function checkInputType(value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^(\+?\d{1,3}[-.\s]?)?\d{7,14}$/; // supports international formats
+
+    if (emailRegex.test(value)) {
+      return "email";
+    } else if (phoneRegex.test(value)) {
+      return "phone";
+    } else {
+      return "invalid";
+    }
+  }
+
   const handleSubmitOrder = async () => {
     setLoadingSubmit(true);
-    
+
     // Check reCAPTCHA first
     if (!isRecaptchaVerified) {
       setRecaptchaError(true);
@@ -267,10 +281,12 @@ export default function CheakoutPage() {
       requiredFields.push(t("Area (Interior, Jerusalem, West Bank)"));
       setEmptyShippingCost(true);
     }
-    if (!email) {
+    if (!email || checkInputType(email) === 'invalid') {
       requiredFields.push(t("Email"));
       setEmptyEmail(true);
+      setEmailError(true)
     }
+
     if (!paymentMethod) {
       requiredFields.push(t("payment method"));
       setEmptyPaymentMethod(true);
@@ -560,6 +576,7 @@ export default function CheakoutPage() {
                           }}
                           isFill={fillEmail}
                         />
+                        {emailError && <p className="text-sm font-bold text-qred">{t("email/phone number is invalid")}</p>}
                       </div>
                       <div className="flex-1">
                         <InputCom
@@ -717,8 +734,6 @@ export default function CheakoutPage() {
                         </div>
                       </div>
                     </div>
-                    
-                    
 
                     <div className="sm:flex sm:space-x-5 items-center mb-6">
                       <div className="sm:w-full mb-5 sm:mb-0 xl:ml-[20px]">
@@ -879,30 +894,24 @@ export default function CheakoutPage() {
                     )}
                   </div>
                   {/* reCAPTCHA Section */}
-                    <div className="sm:flex sm:space-x-5 items-center mb-6">
-                      <div className="sm:w-full mb-5 sm:mb-0 xl:ml-[20px]">
-                        <label className="text-qgray text-[13px] font-bold ">
-                          {t("Security Verification")}
-                          <span style={{ color: "red", fontSize: "1rem" }}>
-                            *
-                          </span>
-                        </label>
-                        <div className="mt-[10px]">
-                          <ReCAPTCHA
-                            ref={recaptchaRef}
-                            sitekey="6LeFru4rAAAAAFznjCATokwLTgurl4cmhUvpCwCQ" // Replace with your actual site key
-                            onChange={handleRecaptchaChange}
-                            onExpired={handleRecaptchaExpired}
-                            onErrored={handleRecaptchaError}
-                          />
-                          {recaptchaError && (
-                            <p className="text-red-600 text-sm mt-2">
-                              {t("Please complete the reCAPTCHA verification")}
-                            </p>
-                          )}
-                        </div>
+                  <div className="sm:flex sm:space-x-5 items-center mb-6">
+                    <div className="sm:w-full mb-5 sm:mb-0 xl:ml-[20px]">
+                      <div className="mt-[10px]">
+                        <ReCAPTCHA
+                          ref={recaptchaRef}
+                          sitekey="6LeFru4rAAAAAFznjCATokwLTgurl4cmhUvpCwCQ" // Replace with your actual site key
+                          onChange={handleRecaptchaChange}
+                          onExpired={handleRecaptchaExpired}
+                          onErrored={handleRecaptchaError}
+                        />
+                        {recaptchaError && (
+                          <p className="text-red-600 text-sm mt-2">
+                            {t("Please complete the reCAPTCHA verification")}
+                          </p>
+                        )}
                       </div>
                     </div>
+                  </div>
                   {errorMessage && (
                     <div
                       className="mb-[30px]"

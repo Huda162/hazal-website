@@ -20,6 +20,7 @@ export default function InputCom({
   isPhone = false,
   isCode = false,
   isLoading = true,
+  onBlur
 }) {
   const lang = localStorage.getItem("i18nextLng");
   return (

@@ -184,5 +184,6 @@
     "payment methods content": "- Available payment methods: cash on delivery or Visa/MasterCard.\n- Customers have the right to inspect the product before paying.\n- The payment method appears on the checkout page.\n- Payments are made in Israeli Shekels (₪) as shown on the checkout page.",
     "privacy policy content": "- We respect your privacy and are committed to protecting your personal data.\n- Information is collected only to provide and improve our services.\n- We do not share your data with third parties without your consent, except where required by law.\n- We use advanced security measures to protect your information from unauthorized access or misuse.\n- By using our website, you agree to this privacy policy.\n- This policy may be updated from time to time, and users will be notified of any major changes.",
     "Security Verification": "Security Verification",
-    "Please complete the reCAPTCHA verification": "Please complete the reCAPTCHA verification"
+    "Please complete the reCAPTCHA verification": "Please complete the reCAPTCHA verification",
+    "email/phone number is invalid": "Email/phone number is invalid"
 }
