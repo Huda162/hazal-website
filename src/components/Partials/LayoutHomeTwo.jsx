@@ -175,7 +175,7 @@ export default function LayoutHomeTwo({ children, childrenClasses }) {
               <div className="left-10 bottom-10 z-[1036] fixed  glowing-circle">
                 <div className="my-1">
                   <a
-                    href={data?.socials?.[0]?.url}
+                    href={data?.socials?.[2]?.url}
                     class="p-2 rounded-lg flex items-center border border-gray-300 justify-center transition-all duration-500 hover:border-gray-100 hover:bg-gray-100 bg-primarygray"
                   >
                     <svg
