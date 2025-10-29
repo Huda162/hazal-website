@@ -123,54 +123,6 @@ export default function Contact() {
                   </p> */}
                 </div>
               </div>
-              <div className="p-5 flex flex-col justify-between w-full bg-[#E7F2EC]">
-                <div className="flex space-x-5">
-                  <span>
-                    <svg
-                      width="44"
-                      height="44"
-                      viewBox="0 0 44 44"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M13.836 18.3183L13.836 18.3193C13.8307 18.9893 14.1161 20.2514 14.7605 21.4272C16.8558 25.2502 18.9688 29.0636 21.0823 32.8778C21.3445 33.3511 21.6068 33.8244 21.869 34.2977L21.869 34.2978C21.9201 34.39 21.9645 34.4453 21.9956 34.4762C22.0272 34.4449 22.0724 34.3887 22.1244 34.2948L22.1245 34.2946C22.6706 33.3089 23.2174 32.3239 23.7641 31.339C25.5963 28.0383 27.4274 24.7399 29.2268 21.4241L13.836 18.3183ZM13.836 18.3183C13.8642 13.6208 16.7919 10.206 20.6315 9.6048C24.7202 8.96493 28.5519 11.3061 29.7792 15.2223L29.7792 15.2224M13.836 18.3183L29.7792 15.2224M29.7792 15.2224C30.451 17.3646 30.2918 19.4599 29.2268 21.4239L29.7792 15.2224ZM26.8314 17.6289L26.8314 17.629C26.8518 20.2773 24.6735 22.4741 22.0205 22.4843C19.3627 22.4945 17.185 20.3434 17.1611 17.6823L26.8314 17.6289ZM26.8314 17.6289C26.8098 14.9632 24.6389 12.824 21.9718 12.8353C19.3106 12.8466 17.1362 15.0295 17.1611 17.6821L26.8314 17.6289Z"
-                        fill="#306c6c"
-                        stroke="#306c6c"
-                      />
-                      <circle cx="22" cy="22" r="21.5" stroke="#306c6c" />
-                    </svg>
-                  </span>
-                  <div>
-                    <h1 className="text-[22px] font-semibold text-qblack leading-[30px] mb-2">
-                      {t("Address")}
-                    </h1>
-                    <p className="text-[15px] text-qblack leading-[30px]">
-                      فلسطين <br />
-                    </p>
-                  </div>
-                </div>
-                {/* <div className="w-full h-[206px] mt-5">
-                  {isLoaded && (
-                    <div
-                      style={{
-                        height: "200px",
-                        width: "550px",
-                      }}
-                    >
-                      <GoogleMap
-                        center={{ lat: 31.549597, lng: 35.094479 }}
-                        zoom={10}
-                        mapContainerStyle={{ height: "200px", width: "100%" }}
-                      >
-                        <MarkerF
-                          position={{ lat: 31.549597, lng: 35.094479 }}
-                        />
-                      </GoogleMap>
-                    </div>
-                  )}
-                </div> */}
-              </div>
             </div>
             <div className="flex-1 bg-white sm:p-10 p-3">
               <div className="title flex flex-col items-center">

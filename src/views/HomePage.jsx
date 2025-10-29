@@ -76,31 +76,6 @@ const HomePage = () => {
           >
             <CategoriesSection categories={data.categories?.slice(0, 12)} />
           </ViewMoreTitle>
-
-          <ViewMoreTitle
-            className="my-categories mb-[60px]"
-            seeMoreUrl="/all-brands"
-            categoryTitle={t("Brands")}
-          >
-            <BrandSection
-              className="brand-section-wrapper mb-[60px]"
-              brands={data.brands
-                ?.filter((item) => item?.have_product === true)
-                .slice(0, 6)}
-            />
-          </ViewMoreTitle>
-
-          <SectionStyleOne
-            // categoryBackground={`${
-            //   import.meta.env.VITE_PUBLIC_URL
-            // }/assets/images/section-category-2.jpg`}
-            products={data.best_sellers_products?.slice(0, 4)}
-            brands={data.categories}
-            categoryTitle="Electronics"
-            sectionTitle={`${t("Most popular sales")}`}
-            seeMoreUrl="/best-seller-products"
-            className="category-products mb-[60px]"
-          />
           {/* <SectionStyleThreeHmFour
             sectionTitle={`${t("New Arrivals")}`}
             seeMoreUrl="/latest-products"

@@ -70,7 +70,7 @@ function App() {
   const lng = localStorage.getItem("language");
 
   useEffect(() => {
-    localStorage.setItem("i18nextLng", "ar");
+    localStorage.setItem("i18nextLng", "he");
     i18n.changeLanguage(lng);
     document.body.dir = i18n.dir();
     theme.direction = i18n.dir();

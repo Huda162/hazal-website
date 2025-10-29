@@ -1,22 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Star from "../Helpers/icons/Star";
-import Selectbox from "../Helpers/Selectbox";
 import useFetchData from "../../hooks/fetchData";
-import { addItem, decrementItem } from "../../redux/cartSlice";
+import { addItem } from "../../redux/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import ModalImage from "react-modal-image";
-import Ads from "../Home/Ads";
-import Tabs from "./tabs";
 import { useTranslation } from "react-i18next";
-import { toast, ToastContainer } from "react-toastify";
 import BreadcrumbCom from "../BreadcrumbCom";
 import card1 from "../../../public/assets/images/card-1.svg";
 import card2 from "../../../public/assets/images/card-2.svg";
 import card3 from "../../../public/assets/images/card-3.svg";
 import card4 from "../../../public/assets/images/card-4.svg";
 import whatsapp from "../../../public/assets/images/whatsapp.png";
-import ReactImageMagnify from "react-image-magnify";
-// import ReactImageZoom from "react-image-zoom";
 import ReactPlayer from "react-player";
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.min.css";
 import InnerImageZoom from "react-inner-image-zoom";
@@ -38,35 +30,22 @@ import {
 } from "../Helpers/Toasts/NotifyDelete";
 import Slider from "react-slick";
 
-export default function ProductView({
-  className,
-  reportHandler,
-  data,
-  onAddCart,
-  onAddFavorite,
-  onDecrement,
-}) {
+export default function ProductView({ className, data }) {
   const dispatch = useDispatch();
   const favorite = useSelector((state) => state.favorit.items);
   const [src, setSrc] = useState(data?.product?.images?.[0]?.url);
   const [qty, setQTY] = useState(1);
-  const [open, setOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const [selectedPrice, setSelectedPrice] = useState("");
-  const playerRef = useRef(null);
-  const [videoThumbnail, setVideoThumbnail] = useState(null);
   const [actualPrice, setActualPrice] = useState("");
-  const { data: data2, loading } = useFetchData("socials");
-  const [colorStock, setColorStock] = useState(
-    data.product?.product_colors?.length > 0
-      ? data.product?.product_colors.reduce((total, e) => {
+  const { data: data2 } = useFetchData("socials");
+  const [variantStock, setColorStock] = useState(
+    data.product?.product_variants?.length > 0
+      ? data.product?.product_variants?.reduce((total, e) => {
           return total + e.stock;
         }, 0)
       : 0
   );
-  const openDialog = () => {
-    setOpen(true);
-  };
   const handleAddFavorite = (item) => {
     const isFavorite = favorite.some(
       (favoriteItem) => favoriteItem.id === item.id
@@ -100,14 +79,10 @@ export default function ProductView({
       setQTY(qty - 1);
     }
   };
-  const handleIncrementItem = (pro) => {
+  const handleIncrementItem = () => {
     setQTY(qty + 1);
   };
-  const closeDialog = () => {
-    setOpen(false);
-  };
   const handleAddcart = (pro, quantity) => {
-    console.log(selectedColor, data.product_colors?.length);
     const updatedProduct = {
       ...pro,
       price_nis_retail: selectedPrice,
@@ -174,19 +149,15 @@ export default function ProductView({
       return true;
     if (data?.product?.product_colors.length > 0 && selectedColor === "")
       return true;
-    if (data?.product?.product_stock === 0 && colorStock === 0) return true;
+    if (data?.product?.product_stock === 0 && variantStock === 0) return true;
 
     return false;
   };
   const isFavorite = favorite.some((item) => item.id === data?.product?.id);
-  const [activeTab, setActiveTab] = useState("first");
   const lang = localStorage.getItem("i18nextLng");
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
-
-  const handleTabClick = (tabName) => {
-    setActiveTab(tabName);
-  };
+  const [selectedSizeId, setSelectedSizeId] = useState("");
 
   const { openCartDrawer } = useCartDrawer();
   useEffect(() => {
@@ -211,20 +182,13 @@ export default function ProductView({
     lang === "ar"
       ? "مرحبا أنا مهتم بالمنتج التالي من موقع زيتون، هل يمكنك تزويدي بمزيد من التفاصيل أو مساعدتي في طلبي\n" +
         `${data?.product?.price_nis_retail} :السعر،${data?.product?.name_ar} :المنتج \n` +
-        `تحقق من ذلك : https://hazal.ps/single-product/${data?.product?.id} \n`
-      : "Hello! I am interested in the following product from Hazal Electronic Marketing website, Could you please provide me with more details or assist me with my order?\n" +
+        `تحقق من ذلك : https://zaytoon.ps/single-product/${data?.product?.id} \n`
+      : "Hello! I am interested in the following product from Zaytoon Jewellery website, Could you please provide me with more details or assist me with my order?\n" +
         `Product name:  ${data?.product?.name_en}, price : ${data?.product?.price_nis_retail}\n` +
-        `Check it out: https://hazal.ps/single-product/${data?.product?.id} \n`;
+        `Check it out: https://zaytoon.ps/single-product/${data?.product?.id} \n`;
 
   const encodedMessage = encodeURIComponent(message);
 
-  const props = {
-    width: 400,
-    height: 650,
-    zoomWidth: 600,
-    img: src ?? "",
-    zoomPosition: "left",
-  };
   const isRTL = ["ar", "he"].includes(i18n.language);
 
   const totalSlides =
@@ -264,7 +228,6 @@ export default function ProductView({
       }`}
     >
       <div data-aos="fade-right" className="lg:w-1/2 xl:mr-[10px] lg:mr-[10px]">
-        {/* Main Image Display */}
         <div className="w-full h-[450px] lg:h-[550px] border border-qgray-border overflow-hidden relative mb-3">
           <div className="xl:hidden block h-full relative">
             <div className="relative">
@@ -310,7 +273,6 @@ export default function ProductView({
             </div>
           </div>
 
-          {/* Desktop View */}
           <div className="hidden xl:flex justify-center items-center h-full">
             {data?.product?.images?.map((item, index) => (
               <div key={`desk-img-${index}`}>
@@ -356,7 +318,6 @@ export default function ProductView({
           </div>
         </div>
 
-        {/* Thumbnail Navigation */}
         <div className="hidden md:flex gap-2 overflow-x-auto whitespace-nowrap py-2 scrollbar-style">
           {data?.product?.images?.map((img) => (
             <div
@@ -371,7 +332,7 @@ export default function ProductView({
                   ? "border-main-color shadow-md"
                   : "border-gray-200 hover:border-gray-300"
               }`}
-              style={{ willChange: "transform" }} // Optimizes animations
+              style={{ willChange: "transform" }}
             >
               {img.type === "video" ? (
                 <img
@@ -433,14 +394,8 @@ export default function ProductView({
               />
             </div>
           </div>
-          <span
-             
-            className="text-qgray md:text-[15px] text-xs font-normal uppercase tracking-wider mb-2 inline-block"
-          >
-            {/* {t("Category")} : {data?.product?.category_name} */}
-          </span>
+          <span className="text-qgray md:text-[15px] text-xs font-normal tracking-wider mb-2 inline-block"></span>
           <p
-             
             className="md:text-[30px] text-xl text-black mb-[20px] font-bold"
             style={{ lineHeight: "120%" }}
           >
@@ -450,17 +405,8 @@ export default function ProductView({
               ? data?.product?.name_en
               : data?.product?.name_he}
           </p>
-          <div
-             
-            className="flex flex-col space-x-2  mt-[30px] mr-[20px] xl:mr-[0px]"
-          >
+          <div className="flex flex-col space-x-2  mt-[30px] mr-[20px] xl:mr-[0px]">
             <span className="text-2xl font-500 text-black flex flex-col">
-              {/* <h3 className="md:text-[22px] text-xl text-black mb-2  ml-[20px]">
-                {t("Price")} :
-              </h3> */}
-              {/* <span className="text-xl font-500 text-qgray line-through ">
-                {Number((data?.product?.price * 1.2).toFixed(2))}₪
-              </span> */}
               {data?.product?.is_offer === "true" ? (
                 <div style={{ display: "flex" }}>
                   <span className="offer-price text-qred font-600 text-[25px] ml-2 ">
@@ -477,13 +423,12 @@ export default function ProductView({
                     ? selectedPrice
                     : data?.product?.price_nis_retail}
                   .00
-                  {/* ₪{data?.product?.price}.00 */}
                 </span>
               )}
             </span>
             <span
               style={{ lineHeight: "120%" }}
-              className="mt-[30px] text-qgray md:text-[18px] text-xs font-normal uppercase tracking-wider mb-2 inline-block"
+              className="mt-[30px] text-qgray md:text-[18px] text-xs font-normal tracking-wider mb-2 inline-block"
             >
               {lang === "ar"
                 ? data?.product?.description_ar
@@ -495,36 +440,109 @@ export default function ProductView({
               <div>
                 <div className="mt-[1rem]">{t("sizes")}:</div>
 
-                <div className="mt-[1rem] mb-2">
-                  <div className="flex flex-wrap gap-2">
-                    {data.product.product_sizes.map((item, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        className={`min-w-[40px] px-3 py-1 text-sm md:text-base font-normal uppercase tracking-wider rounded border transition-colors
-          ${
-            selectedSize === item.size
-              ? "border-qblack text-qblack bg-gray-100"
-              : "border-gray-200 text-gray-700 hover:bg-gray-50"
-          }`}
-                        onClick={() => {
-                          setSelectedSize(item.size);
-                          if (data.product?.is_offer === "true") {
-                            setSelectedPrice(
-                              item.size_price_nis -
-                                (item.size_price_nis *
-                                  data.product?.discount_percentage) /
-                                  100
-                            );
-                            setActualPrice(item.size_price_nis);
-                          } else {
-                            setSelectedPrice(item.size_price_nis);
-                          }
-                        }}
-                      >
-                        {item.size}
-                      </button>
-                    ))}
+                <div
+                  style={{
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                    paddingRight: "8px",
+                  }}
+                  className="text-qgray md:text-[18px] text-xs font-normal uppercase tracking-wider mb-2"
+                >
+                  <div className="xl:grid grid xl:grid-cols-7 md:grid-cols-10 lg:grid-cols-7 grid-cols-5 gap-3 mb-[46px]">
+                    {data.product.product_sizes.map((item, index) => {
+                      const allSizeStock =
+                        data.product?.product_variants?.reduce((total, e) => {
+                          return e.product_size_id === item.id
+                            ? total + e.stock
+                            : total;
+                        }, 0);
+                      const sizeStockWithColor =
+                        selectedColor &&
+                        selectedColor !== undefined &&
+                        selectedColor !== ""
+                          ? data.product?.product_variants?.reduce(
+                              (total, e) => {
+                                return e.product_size_id === item.id && e.product_color_id === selectedColor
+                                  ? total + e.stock
+                                  : total;
+                              },
+                              0
+                            )
+                          : 0;
+
+                      const sizeStock =
+                        selectedColor &&
+                        selectedColor !== undefined &&
+                        selectedColor !== ""
+                          ? sizeStockWithColor
+                          : allSizeStock;
+                      const isOutOfStock = sizeStock === 0;
+                      const isSelected = selectedSize === item.size;
+                      const isLowStock = sizeStock > 0 && sizeStock < 10;
+                      return (
+                        <div
+                          key={index}
+                          className={`${
+                            isSelected && "text-black"
+                          } flex flex-col justify-center items-center text-sm group relative`}
+                        >
+                          <span
+                            className={`rounded-md flex justify-center items-center m-1 relative  py-1 px-2 ${
+                              isOutOfStock ? "opacity-80" : ""
+                            }`}
+                            style={
+                              isSelected
+                                ? {
+                                    border: isOutOfStock
+                                      ? "1px solid #ef4444"
+                                      : "1px solid #b58640",
+                                    cursor: isOutOfStock
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  }
+                                : {
+                                    border: isOutOfStock
+                                      ? "1px solid #fca5a5"
+                                      : "1px solid #efefef",
+                                    cursor: isOutOfStock
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  }
+                            }
+                            onClick={() => {
+                              if (!isOutOfStock) {
+                                const currentScroll = window.scrollY;
+                                setSelectedSize(item.size);
+                                setSelectedSizeId(item.id);
+                                if (data.product?.is_offer === "true") {
+                                  setSelectedPrice(
+                                    item.size_price_nis -
+                                      (item.size_price_nis *
+                                        data.product?.discount_percentage) /
+                                        100
+                                  );
+                                  setActualPrice(item.size_price_nis);
+                                } else {
+                                  setSelectedPrice(item.size_price_nis);
+                                }
+                                requestAnimationFrame(() => {
+                                  window.scrollTo(0, currentScroll);
+                                });
+                              }
+                            }}
+                          >
+                            {isOutOfStock && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-full h-full rounded-md bg-red-300 bg-opacity-10"></div>
+                                <div className="absolute text-red-600 font-bold text-2xl"></div>
+                              </div>
+                            )}
+
+                            {item.size}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -542,9 +560,35 @@ export default function ProductView({
                 >
                   <div className="xl:grid grid xl:grid-cols-7 md:grid-cols-10 lg:grid-cols-7 grid-cols-5 gap-3 mb-[46px]">
                     {data.product.product_colors.map((item, index) => {
-                      const isOutOfStock = item.stock === 0;
+                      const allColorStock =
+                        data.product?.product_variants?.reduce((total, e) => {
+                          return e.product_color_id === item.id
+                            ? total + e.stock
+                            : total;
+                        }, 0);
+                      const colorStockWithSize =
+                        selectedSizeId &&
+                        selectedSizeId !== undefined &&
+                        selectedSize !== ""
+                          ? data.product?.product_variants?.reduce(
+                              (total, e) => {
+                                return e.product_color_id === item.id &&
+                                  e.product_size_id === selectedSizeId
+                                  ? total + e.stock
+                                  : total;
+                              },
+                              0
+                            )
+                          : 0;
+                      const colorStock =
+                        selectedSizeId &&
+                        selectedSizeId !== undefined &&
+                        selectedSize !== ""
+                          ? colorStockWithSize
+                          : allColorStock;
+                      const isOutOfStock = colorStock === 0;
                       const isSelected = selectedColor === item.id;
-                      const isLowStock = item.stock > 0 && item.stock < 10;
+                      const isLowStock = colorStock > 0 && colorStock < 10;
 
                       return (
                         <div
@@ -600,7 +644,6 @@ export default function ProductView({
                               }}
                             />
 
-                            {/* Red X overlay for out of stock */}
                             {isOutOfStock && (
                               <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="w-full h-full rounded-md bg-red-300 bg-opacity-10"></div>
@@ -609,8 +652,7 @@ export default function ProductView({
                             )}
                           </span>
 
-                          {/* Tooltip */}
-                          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                          {/* <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
                             <div
                               className={`text-xs px-2 py-1 rounded whitespace-nowrap ${
                                 isOutOfStock
@@ -623,7 +665,7 @@ export default function ProductView({
                               {isOutOfStock
                                 ? t("Out of stock")
                                 : isLowStock
-                                ? `${t("Only")} ${item.stock} ${t("left")}`
+                                ? `${t("Only")} ${colorStock} ${t("left")}`
                                 : t("In stock")}
                             </div>
                             <div
@@ -635,7 +677,7 @@ export default function ProductView({
                                   : "border-b-green-100"
                               }`}
                             ></div>
-                          </div>
+                          </div> */}
                         </div>
                       );
                     })}
@@ -644,14 +686,8 @@ export default function ProductView({
               </div>
             )}
           </div>
-          {/* <div   className="colors mb-[20px] mt-[20px]">
-          </div> */}
           <div className=" border border-[#EDEDED] mt-[30px] mb-[20px] m-1"></div>
-          <div
-             
-            className="quantity-actions w-full flex flex-col sm:flex-row items-center gap-3 mb-8"
-          >
-            {/* Quantity Selector */}
+          <div className="quantity-actions w-full flex flex-col sm:flex-row items-center gap-3 mb-8">
             <div className="w-full sm:w-auto flex-shrink-0">
               <div className="w-full sm:w-[120px] h-[50px] px-4 flex items-center border border-gray-200 rounded-lg">
                 <div className="flex justify-between items-center w-full">
@@ -677,10 +713,7 @@ export default function ProductView({
                 </div>
               </div>
             </div>
-
-            {/* Action Buttons */}
             <div className="w-full grid grid-cols-6 gap-2 sm:gap-3">
-              {/* Favorite Button - Narrower */}
               <div className="col-span-1 flex justify-center">
                 <button
                   onClick={() => handleAddFavorite(data.product)}
@@ -708,18 +741,20 @@ export default function ProductView({
                 </button>
               </div>
 
-              {/* Add to Cart Button - Medium Width */}
               <div className="col-span-3 sm:col-span-2 relative">
                 <button
                   onMouseOver={() =>
-                    data?.product?.product_colors.length > 0 &&
-                    data?.product?.product_stock !== 0 &&
-                    colorStock !== 0 &&
+                    (data?.product?.product_colors.length > 0 ||
+                      data?.product?.product_sizes.length > 0 ||
+                      data?.product?.product_stock !== 0 ||
+                      variantStock !== 0) &&
                     setShowWarning(true)
                   }
                   onMouseLeave={() =>
-                    data?.product?.product_colors.length > 0 &&
-                    data?.product?.product_stock !== 0 && colorStock !== 0 &&
+                    (data?.product?.product_colors.length > 0 ||
+                      data?.product?.product_sizes.length > 0 ||
+                      data?.product?.product_stock !== 0 ||
+                      variantStock !== 0) &&
                     setShowWarning(false)
                   }
                   disabled={isButtonDisabled()}
@@ -731,7 +766,9 @@ export default function ProductView({
                       : "bg-black hover:bg-gray-800 text-white hover:scale-[1.02]"
                   }`}
                 >
-                  {isButtonDisabled() && data?.product?.product_stock === 0 && colorStock === 0
+                  {isButtonDisabled() &&
+                  data?.product?.product_stock === 0 &&
+                  variantStock === 0
                     ? t("out of stock")
                     : t("Add to cart")}
                 </button>
@@ -750,8 +787,6 @@ export default function ProductView({
                   </div>
                 )}
               </div>
-
-              {/* WhatsApp Button - Wider */}
               <div className="col-span-2 sm:col-span-3">
                 <a
                   href={`https://api.whatsapp.com/send?phone=${data2?.socials?.[2]?.url}&text=${encodedMessage}`}
@@ -822,9 +857,6 @@ export default function ProductView({
           </div>
         </div>
       </div>
-      {/* <ToastContainer /> */}
-
-      {/* {open && <Ads close={() => setOpen(false)} />} */}
     </div>
   );
 }

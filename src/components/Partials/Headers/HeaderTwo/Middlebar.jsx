@@ -87,14 +87,6 @@ export default function Middlebar({ className }) {
                     </span>
                   </Link>
                 </li>
-
-                <li>
-                  <Link to="/all-brands">
-                    <span className="nav-item flex items-center text-sm 2xl:text-[15px] font-600 cursor-pointer lg:text-xs">
-                      <span>{t("brands")} </span>
-                    </span>
-                  </Link>
-                </li>
                 <li>
                   <Link to="/products">
                     <span className="nav-item flex items-center text-sm 2xl:text-[15px] font-600 cursor-pointer lg:text-xs">
