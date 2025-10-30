@@ -590,7 +590,7 @@ export default function CheakoutPage() {
                           }}
                           name="phone"
                           isEmpty={emptyPhone}
-                          isFill={phone.length === 10}
+                          isFill={phone.length === 8}
                           isPhone={true}
                         />
                       </div>
