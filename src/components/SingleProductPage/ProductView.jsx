@@ -39,13 +39,6 @@ export default function ProductView({ className, data }) {
   const [selectedPrice, setSelectedPrice] = useState("");
   const [actualPrice, setActualPrice] = useState("");
   const { data: data2 } = useFetchData("socials");
-  const [variantStock, setColorStock] = useState(
-    data.product?.product_variants?.length > 0
-      ? data.product?.product_variants?.reduce((total, e) => {
-          return total + e.stock;
-        }, 0)
-      : 0
-  );
   const handleAddFavorite = (item) => {
     const isFavorite = favorite.some(
       (favoriteItem) => favoriteItem.id === item.id
@@ -149,7 +142,6 @@ export default function ProductView({ className, data }) {
       return true;
     if (data?.product?.product_colors.length > 0 && selectedColor === "")
       return true;
-    if (data?.product?.product_stock === 0 && variantStock === 0) return true;
 
     return false;
   };
@@ -537,12 +529,12 @@ export default function ProductView({ className, data }) {
                             }
                             onClick={(e) => {
                               e.preventDefault();
-                                const currentScroll = window.scrollY;
-                                setSelectedColor(item.id);
-                                changeImgHandler(item.color_image);
-                                requestAnimationFrame(() => {
-                                  window.scrollTo(0, currentScroll);
-                                });
+                              const currentScroll = window.scrollY;
+                              setSelectedColor(item.id);
+                              changeImgHandler(item.color_image);
+                              requestAnimationFrame(() => {
+                                window.scrollTo(0, currentScroll);
+                              });
                             }}
                           >
                             <div
@@ -617,16 +609,12 @@ export default function ProductView({ className, data }) {
                 <button
                   onMouseOver={() =>
                     (data?.product?.product_colors.length > 0 ||
-                      data?.product?.product_sizes.length > 0 ||
-                      data?.product?.product_stock !== 0 ||
-                      variantStock !== 0) &&
+                      data?.product?.product_sizes.length > 0) &&
                     setShowWarning(true)
                   }
                   onMouseLeave={() =>
                     (data?.product?.product_colors.length > 0 ||
-                      data?.product?.product_sizes.length > 0 ||
-                      data?.product?.product_stock !== 0 ||
-                      variantStock !== 0) &&
+                      data?.product?.product_sizes.length > 0) &&
                     setShowWarning(false)
                   }
                   disabled={isButtonDisabled()}
@@ -638,11 +626,7 @@ export default function ProductView({ className, data }) {
                       : "bg-black hover:bg-gray-800 text-white hover:scale-[1.02]"
                   }`}
                 >
-                  {isButtonDisabled() &&
-                  data?.product?.product_stock === 0 &&
-                  variantStock === 0
-                    ? t("out of stock")
-                    : t("Add to cart")}
+                  {isButtonDisabled() && t("Add to cart")}
                 </button>
 
                 {showWarning && isButtonDisabled() && (

@@ -169,13 +169,6 @@ function ProductCardStyleThree({ datas, currentPage }) {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedSizeId, setSelectedSizeId] = useState("");
   const [selectedPrice, setSelectedPrice] = useState("");
-  const [variantStock, setColorStock] = useState(
-    datas?.product_variants?.length > 0
-      ? datas?.product_variants?.reduce((total, e) => {
-          return total + e.stock;
-        }, 0)
-      : 0
-  );
 
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -205,14 +198,6 @@ function ProductCardStyleThree({ datas, currentPage }) {
               }}
             >
               {t("out of stock")}
-            </div>
-          )}
-          {datas.product_stock === 0 && variantStock === 0 && (
-            <div className="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center">
-              <div className=" text-black py-2 px-4 rounded-lg font-bold text-lg flex flex-col items-center justify-center gap-2">
-                {t("Out of stock")}
-                <img src={out_of_stock} width={50} />
-              </div>
             </div>
           )}
           {datas.is_offer === "true" && (
@@ -348,11 +333,9 @@ function ProductCardStyleThree({ datas, currentPage }) {
               <button
                 type="button"
                 className={`rounded-lg px-1 md:px-0 w-[100%] flex justify-center items-center ml-1 transition-all duration-200 ${
-                  datas.product_stock === 0 && variantStock === 0
-                    ? "border border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed"
-                    : "bg-main-color text-white hover:bg-main-color-dark"
+                  
+                   "bg-main-color text-white hover:bg-main-color-dark"
                 }`}
-                disabled={datas.product_stock === 0 && variantStock === 0}
                 onClick={() => {
                   if (
                     datas.product_sizes?.length > 0 ||
@@ -372,30 +355,12 @@ function ProductCardStyleThree({ datas, currentPage }) {
                 }}
               >
                 <div className="flex items-center space-x-2">
-                  {datas.product_stock === 0 && variantStock === 0 && (
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  )}
                   <span className="xl:text-[14px] text-[12px]">
-                    {datas.product_stock === 0 && variantStock === 0 ? (
-                      t("Out of stock")
-                    ) : (
+                    
                       <div className="flex items-center justify-center gap-1">
                         <img src={cart_add} width={18} />
                         <p className="hidden md:block">{t("Add to cart")}</p>
                       </div>
-                    )}
                   </span>
                 </div>
               </button>
