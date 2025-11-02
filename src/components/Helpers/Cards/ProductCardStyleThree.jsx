@@ -171,10 +171,10 @@ function ProductCardStyleThree({ datas, currentPage }) {
   const [selectedPrice, setSelectedPrice] = useState("");
   const [variantStock, setColorStock] = useState(
     datas?.product_variants?.length > 0
-    ? datas?.product_variants?.reduce((total, e) => {
-        return total + e.stock;
-      }, 0)
-    : 0
+      ? datas?.product_variants?.reduce((total, e) => {
+          return total + e.stock;
+        }, 0)
+      : 0
   );
 
   function afterOpenModal() {
@@ -453,7 +453,7 @@ function ProductCardStyleThree({ datas, currentPage }) {
           </div>
         </DialogTitle>
         <DialogContent>
-          {datas?.product_sizes.length > 0 && (
+          {datas.product_sizes.length > 0 && (
             <div>
               <div className="mt-[1rem]">{t("sizes")}:</div>
 
@@ -467,35 +467,7 @@ function ProductCardStyleThree({ datas, currentPage }) {
               >
                 <div className="xl:grid grid xl:grid-cols-7 md:grid-cols-10 lg:grid-cols-7 grid-cols-5 gap-3 mb-[46px]">
                   {datas?.product_sizes.map((item, index) => {
-                    const allSizeStock = datas?.product_variants?.reduce(
-                      (total, e) => {
-                        return e.product_size_id === item.id
-                          ? total + e.stock
-                          : total;
-                      },
-                      0
-                    );
-                    const sizeStockWithColor =
-                      selectedColor &&
-                      selectedColor !== undefined &&
-                      selectedColor !== ""
-                        ? datas?.product_variants?.reduce((total, e) => {
-                            return e.product_size_id === item.id &&
-                              e.product_color_id === selectedColor
-                              ? total + e.stock
-                              : total;
-                          }, 0)
-                        : 0;
-
-                    const sizeStock =
-                      selectedColor &&
-                      selectedColor !== undefined &&
-                      selectedColor !== ""
-                        ? sizeStockWithColor
-                        : allSizeStock;
-                    const isOutOfStock = sizeStock === 0;
                     const isSelected = selectedSize === item.size;
-                    const isLowStock = sizeStock > 0 && sizeStock < 10;
                     return (
                       <div
                         key={index}
@@ -504,57 +476,38 @@ function ProductCardStyleThree({ datas, currentPage }) {
                         } flex flex-col justify-center items-center text-sm group relative`}
                       >
                         <span
-                          className={`rounded-md flex justify-center items-center m-1 relative  py-1 px-2 ${
-                            isOutOfStock ? "opacity-80" : ""
-                          }`}
+                          className={`rounded-md flex justify-center items-center m-1 relative  py-1 px-2`}
                           style={
                             isSelected
                               ? {
-                                  border: isOutOfStock
-                                    ? "1px solid #ef4444"
-                                    : "1px solid #b58640",
-                                  cursor: isOutOfStock
-                                    ? "not-allowed"
-                                    : "pointer",
+                                  border: "1px solid #b58640",
+                                  cursor: "pointer",
                                 }
                               : {
-                                  border: isOutOfStock
-                                    ? "1px solid #fca5a5"
-                                    : "1px solid #efefef",
-                                  cursor: isOutOfStock
-                                    ? "not-allowed"
-                                    : "pointer",
+                                  border: "1px solid #efefef",
+                                  cursor: "pointer",
                                 }
                           }
                           onClick={() => {
-                            if (!isOutOfStock) {
-                              const currentScroll = window.scrollY;
-                              setSelectedSize(item.size);
-                              setSelectedSizeId(item.id);
-                              if (datas?.is_offer === "true") {
-                                setSelectedPrice(
-                                  item.size_price_nis -
-                                    (item.size_price_nis *
-                                      datas?.discount_percentage) /
-                                      100
-                                );
-                                setActualPrice(item.size_price_nis);
-                              } else {
-                                setSelectedPrice(item.size_price_nis);
-                              }
-                              requestAnimationFrame(() => {
-                                window.scrollTo(0, currentScroll);
-                              });
+                            const currentScroll = window.scrollY;
+                            setSelectedSize(item.size);
+                            setSelectedSizeId(item.id);
+                            if (datas?.is_offer === "true") {
+                              setSelectedPrice(
+                                item.size_price_nis -
+                                  (item.size_price_nis *
+                                    datas?.discount_percentage) /
+                                    100
+                              );
+                              setActualPrice(item.size_price_nis);
+                            } else {
+                              setSelectedPrice(item.size_price_nis);
                             }
+                            requestAnimationFrame(() => {
+                              window.scrollTo(0, currentScroll);
+                            });
                           }}
                         >
-                          {isOutOfStock && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-full h-full rounded-md bg-red-300 bg-opacity-10"></div>
-                              <div className="absolute text-red-600 font-bold text-2xl"></div>
-                            </div>
-                          )}
-
                           {item.size}
                         </span>
                       </div>
@@ -564,7 +517,7 @@ function ProductCardStyleThree({ datas, currentPage }) {
               </div>
             </div>
           )}
-          {datas?.product_colors.length > 0 && (
+          {datas.product_colors.length > 0 && (
             <div>
               <div className="mt-[1rem]">{t("colors")}:</div>
               <div
@@ -575,34 +528,9 @@ function ProductCardStyleThree({ datas, currentPage }) {
                 }}
                 className="text-qgray md:text-[18px] text-xs font-normal uppercase tracking-wider mb-2"
               >
-                <div className="xl:grid grid xl:grid-cols-7 md:grid-cols-10 lg:grid-cols-7 grid-cols-5 gap-3 mb-[46px]">
+                <div className="xl:grid grid xl:grid-cols-12 md:grid-cols-10 lg:grid-cols-10 grid-cols-7 gap-3 mb-[46px]">
                   {datas?.product_colors.map((item, index) => {
-                    const allColorStock =
-                      datas?.product_variants?.reduce((total, e) => {
-                        return e.product_color_id === item.id
-                          ? total + e.stock
-                          : total;
-                      }, 0);
-                    const colorStockWithSize =
-                      selectedSizeId &&
-                      selectedSizeId !== undefined &&
-                      selectedSize !== ""
-                        ? datas?.product_variants?.reduce((total, e) => {
-                            return e.product_color_id === item.id &&
-                              e.product_size_id === selectedSizeId
-                              ? total + e.stock
-                              : total;
-                          }, 0)
-                        : 0;
-                    const colorStock =
-                      selectedSizeId &&
-                      selectedSizeId !== undefined &&
-                      selectedSize !== ""
-                        ? colorStockWithSize
-                        : allColorStock;
-                    const isOutOfStock = colorStock === 0;
                     const isSelected = selectedColor === item.id;
-                    const isLowStock = colorStock > 0 && colorStock < 10;
 
                     return (
                       <div
@@ -612,58 +540,32 @@ function ProductCardStyleThree({ datas, currentPage }) {
                         } flex flex-col justify-center items-center text-sm group relative`}
                       >
                         <span
-                          className={`rounded-md flex justify-center items-center h-[4rem] w-[4rem] m-1 relative ${
-                            isOutOfStock ? "opacity-80" : ""
-                          }`}
+                          className={`rounded-full flex justify-center items-center h-[1.8rem] w-[1.8rem] m-1 relative `}
                           style={
                             isSelected
                               ? {
-                                  border: isOutOfStock
-                                    ? "1px solid #ef4444"
-                                    : "1px solid #b58640",
-                                  cursor: isOutOfStock
-                                    ? "not-allowed"
-                                    : "pointer",
+                                  border: "1px solid #b58640",
+                                  cursor: "pointer",
                                 }
                               : {
-                                  border: isOutOfStock
-                                    ? "1px solid #fca5a5"
-                                    : "1px solid #efefef",
-                                  cursor: isOutOfStock
-                                    ? "not-allowed"
-                                    : "pointer",
+                                  border: "1px solid #efefef",
+                                  cursor: "pointer",
                                 }
                           }
                           onClick={(e) => {
                             e.preventDefault();
-                            if (!isOutOfStock) {
-                              const currentScroll = window.scrollY;
-                              setSelectedColor(item.id);
-                              changeImgHandler(item.color_image);
-                              requestAnimationFrame(() => {
-                                window.scrollTo(0, currentScroll);
-                              });
-                            }
+                            const currentScroll = window.scrollY;
+                            setSelectedColor(item.id);
+                            changeImgHandler(item.color_image);
+                            requestAnimationFrame(() => {
+                              window.scrollTo(0, currentScroll);
+                            });
                           }}
                         >
-                          <img
-                            src={item.color_image}
-                            className={`h-[3.25rem] w-[3.25rem] rounded-md object-cover ${
-                              isOutOfStock ? "grayscale-[70%]" : ""
-                            }`}
-                            alt="Color variant"
-                            onError={(e) => {
-                              e.target.onError = null;
-                              e.target.src = logo;
-                            }}
-                          />
-
-                          {isOutOfStock && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-full h-full rounded-md bg-red-300 bg-opacity-10"></div>
-                              <div className="absolute text-red-600 font-bold text-2xl"></div>
-                            </div>
-                          )}
+                          <div
+                            className={`h-[1.5rem] w-[1.5rem] rounded-full object-cover`}
+                            style={{ backgroundColor: item.color }}
+                          ></div>
                         </span>
                       </div>
                     );
