@@ -86,6 +86,13 @@ export default function Footer() {
                       {t("Terms and Policies")}
                     </span>
                   </Link>
+                </li>
+                <li>
+                  <Link to="/privacy-policy">
+                    <span className="text-[white] text-[13px] hover:text-white border-b border-transparent hover:border-white">
+                      {t("Privacy Policy")}
+                    </span>
+                  </Link>
                   <div className="my-5">
                     <img src={cards} alt="cards" />
                   </div>

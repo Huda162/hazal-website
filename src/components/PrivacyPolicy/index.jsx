@@ -12,22 +12,14 @@ export default function PrivacyPolicy() {
           <PageTitle
             breadcrumb={[
               { name: t("Home Page"), path: "/" },
-              { name: t("Terms and Policies"), path: "" },
+              { name: t("Privacy Policy"), path: "" },
             ]}
-            title={t("Terms and Policies")}
+            title={t("Privacy Policy")}
           />
         </div>
         <div className="container-x mx-auto">
-          <PageTitle solid title={t("Delivery Methods")} />
-          <div className="mx-[2rem]  whitespace-pre-line">{t("delivery methods content")}</div>
-          <PageTitle solid title={t("Exchange Policy")} />
-          <div className="mx-[2rem]  whitespace-pre-line">{t("exchange policy content")}</div>
-          <PageTitle solid title={t("Return Policy")} />
-          <div className="mx-[2rem]  whitespace-pre-line">{t("return policy content")}</div>
-          <PageTitle solid title={t("Payment Methods")} />
-          <div className="mx-[2rem]  whitespace-pre-line">{t("payment methods content")}</div>
-          <PageTitle solid title={t("Privacy Policy")} />
-          <div className="mx-[2rem]  whitespace-pre-line">{t("privacy policy content")}</div>
+          <div className="mx-[2rem]  whitespace-pre-line">{t("privacy policy page content")}</div>
+
         </div>
       </div>
     </LayoutHomeTwo>

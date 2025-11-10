@@ -626,7 +626,7 @@ export default function ProductView({ className, data }) {
                       : "bg-black hover:bg-gray-800 text-white hover:scale-[1.02]"
                   }`}
                 >
-                  {isButtonDisabled() && t("Add to cart")}
+                  {t("Add to cart")}
                 </button>
 
                 {showWarning && isButtonDisabled() && (

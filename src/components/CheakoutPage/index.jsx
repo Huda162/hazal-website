@@ -13,7 +13,7 @@ import {
 import usePostData from "../../hooks/postData";
 import { ToastContainer, toast } from "react-toastify";
 import { clearCart } from "../../redux/cartSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ReCAPTCHA from "react-google-recaptcha";
 import {
@@ -133,6 +133,8 @@ export default function CheakoutPage() {
   const [discount, setDiscount] = useState(0);
   const [loadCode, setLoadCode] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [agree, setAgree] = useState(false);
+  const [disagreed, setDisagreed] = useState(false);
 
   // reCAPTCHA handler
   const handleRecaptchaChange = (value) => {
@@ -235,7 +237,7 @@ export default function CheakoutPage() {
     }
   };
 
-  const [emailError, setEmailError] = useState(false)
+  const [emailError, setEmailError] = useState(false);
   function checkInputType(value) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^(\+?\d{1,3}[-.\s]?)?\d{7,14}$/; // supports international formats
@@ -251,7 +253,7 @@ export default function CheakoutPage() {
 
   const handleSubmitOrder = async () => {
     setLoadingSubmit(true);
-
+    let disagree = false;
     // Check reCAPTCHA first
     if (!isRecaptchaVerified) {
       setRecaptchaError(true);
@@ -281,21 +283,27 @@ export default function CheakoutPage() {
       requiredFields.push(t("Area (Interior, Jerusalem, West Bank)"));
       setEmptyShippingCost(true);
     }
-    if (!email || checkInputType(email) === 'invalid') {
+    if (!email || checkInputType(email) === "invalid") {
       requiredFields.push(t("Email"));
       setEmptyEmail(true);
-      setEmailError(true)
+      setEmailError(true);
     }
 
     if (!paymentMethod) {
       requiredFields.push(t("payment method"));
       setEmptyPaymentMethod(true);
     }
+    if (!agree) {
+      disagree = true;
+    }
     if (requiredFields.length > 0) {
       const errorMessage = `${t(
         "Please fill out the following fields"
       )}   : ${requiredFields.join(", ")}`;
       setErrorMessage(errorMessage);
+      setLoadingSubmit(false);
+    } else if (disagree) {
+      setDisagreed(disagree);
       setLoadingSubmit(false);
     } else {
       try {
@@ -344,7 +352,20 @@ export default function CheakoutPage() {
     if (paymentMethod) {
       setfillPaymentMethod(true);
     }
-  }, [name, phone, city, near, shippingCost, area, email, paymentMethod]);
+    if (agree) {
+      setDisagreed(false);
+    }
+  }, [
+    name,
+    phone,
+    city,
+    near,
+    shippingCost,
+    area,
+    email,
+    paymentMethod,
+    agree,
+  ]);
 
   const handleAddAccount = async () => {
     const fullPhone = "05" + phone;
@@ -408,7 +429,13 @@ export default function CheakoutPage() {
     formData.append("sum", sum);
     formData.append("coupon_id", coponId);
     formData.append("source", "website");
-
+    const orderMainData = {
+      amount: sum + shippingCost.price,
+      currency: "ILS",
+      email: email,
+      mobile: phone,
+      callback_url: "https://hazal.ps/payments/lahza/callback",
+    };
     cart?.forEach((element, index) => {
       formData.append(`product_id[${index}]`, element.id);
       formData.append(`price[${index}]`, element.price_nis_retail);
@@ -420,7 +447,7 @@ export default function CheakoutPage() {
     });
 
     try {
-      const resposne = await usePostData("add_order", formData);
+      const response = await usePostData("add_order", formData);
       dispatch(clearCart());
       setPhone("");
       setArea("");
@@ -429,7 +456,6 @@ export default function CheakoutPage() {
       setNote("");
       setEmail("");
       setName("");
-      setPaymentMethod("");
       // Reset reCAPTCHA
       if (recaptchaRef.current) {
         recaptchaRef.current.reset();
@@ -442,7 +468,11 @@ export default function CheakoutPage() {
           ? notifyConfirmOrderEn()
           : notifyConfirmOrderHe();
       }
-      navigate("/");
+      if (paymentMethod === "cash") {
+        navigate("/");
+      } else {
+        handleTransactions(response, orderMainData);
+      }
     } catch (error) {
       console.log(error);
       {
@@ -454,7 +484,33 @@ export default function CheakoutPage() {
       }
     }
   };
-
+  const handleTransactions = async (orderResponse, orderMainData) => {
+    const body = {
+      amount: orderMainData?.amount.toString()+'00',
+      currency: orderMainData?.currency,
+      email: orderMainData?.email,
+      mobile: '05'+orderMainData?.mobile,
+      reference: orderResponse.order_id.toString(),
+      callback_url: "https://hazal.ps/payments/lahza/callback",
+      metadata: `{\"order_id\":${orderResponse.order_id},\"notes\":\"first try\"}`,
+    };
+    try {
+      const response = await axios.post(
+        `https://api.lahza.io/transaction/initialize`,
+        body,
+        {
+          headers: {
+            Authorization: "Bearer sk_test_CvQTzqJQ3MzbGtEOercmvFTG61bJMxsjV",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data)
+      window.location.href = response.data.data.authorization_url;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const login = async () => {
     console.log("entered login");
     const headers = {
@@ -576,7 +632,11 @@ export default function CheakoutPage() {
                           }}
                           isFill={fillEmail}
                         />
-                        {emailError && <p className="text-sm font-bold text-qred">{t("email/phone number is invalid")}</p>}
+                        {emailError && (
+                          <p className="text-sm font-bold text-qred">
+                            {t("email/phone number is invalid")}
+                          </p>
+                        )}
                       </div>
                       <div className="flex-1">
                         <InputCom
@@ -731,6 +791,32 @@ export default function CheakoutPage() {
                             <option value="visa">{t("visa")}</option>
                             <option value="cash">{t("cash")}</option>
                           </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1 ml-4">
+                      <div className="mb-5">
+                        <div class="flex items-center mb-4">
+                          <input
+                            id="default-checkbox"
+                            type="checkbox"
+                            value={agree}
+                            onChange={(e) => {
+                              setDisagreed(agree);
+                              setAgree(!agree);
+                              console.log(agree);
+                            }}
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          ></input>
+                          <label
+                            for="default-checkbox"
+                            class="ms-2 text-sm font-medium text-gray-500"
+                          >
+                            {t("i agree to recieve messages")}{" "}
+                            <Link to="/privacy-policy" className="underline">
+                              {t("website’s privacy policy")}
+                            </Link>
+                          </label>
                         </div>
                       </div>
                     </div>
@@ -926,6 +1012,14 @@ export default function CheakoutPage() {
                       style={{ color: "red", marginTop: "10px" }}
                     >
                       {t("phone number must start with 05")}
+                    </div>
+                  )}
+                  {disagreed && (
+                    <div
+                      className="mb-[30px]"
+                      style={{ color: "red", marginTop: "10px" }}
+                    >
+                      {t("agree")}
                     </div>
                   )}
                   <button

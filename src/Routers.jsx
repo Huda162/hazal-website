@@ -15,7 +15,6 @@ import FlashSale from "./components/FlashSale";
 import FourZeroFour from "./components/FourZeroFour";
 import Home from "./components/Home";
 import HomeTwo from "./components/HomeTwo";
-import PrivacyPolicy from "./components/PrivacyPolicy";
 import ProductsCompaire from "./components/ProductsCompaire/index";
 import SallerPage from "./components/SallerPage";
 import Sallers from "./components/Sellers";
@@ -37,6 +36,10 @@ import ProductsPage from "./components/products/ProductsPage.jsx";
 import Offers from "./components/OfferPage/index.jsx";
 import ProfilePage from "./components/profile/profile.jsx";
 import LoginPage from "./components/Login/login.jsx";
+import TermsAndPolicies from "./components/TermsAndPolicies/index.jsx";
+import PrivacyPolicy from "./components/PrivacyPolicy/index.jsx";
+import Success from "./components/CheakoutPage/success.jsx";
+import Failure from "./components/CheakoutPage/failure.jsx";
 export default function Routers() {
   return (
     <Routes>
@@ -55,8 +58,11 @@ export default function Routers() {
       <Route exact path="/checkout" element={<CheakoutPage />} />
       <Route exact path="/wishlist" element={<Wishlist />} />
       <Route exact path="/profile" element={<ProfilePage />} />
-      <Route exact path="/terms-and-policies" element={<PrivacyPolicy />} />
+      <Route exact path="/terms-and-policies" element={<TermsAndPolicies />} />
+      <Route exact path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route exact path="/login-customer" element={<LoginPage />} />
+      <Route exact path="/payment-success" element={<Success />} />
+      <Route exact path="/payment-failure" element={<Failure />} />
 
       <Route
         exact
