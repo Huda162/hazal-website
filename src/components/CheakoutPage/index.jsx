@@ -486,12 +486,12 @@ export default function CheakoutPage() {
   };
   const handleTransactions = async (orderResponse, orderMainData) => {
     const body = {
-      amount: orderMainData?.amount.toString()+'00',
+      amount: orderMainData?.amount*100,
       currency: orderMainData?.currency,
       email: orderMainData?.email,
       mobile: '05'+orderMainData?.mobile,
       reference: orderResponse.order_id.toString(),
-      callback_url: "https://hazal.ps/payments/lahza/callback",
+      callback_url: "https://hazal.ps/payment-success",
       metadata: `{\"order_id\":${orderResponse.order_id},\"notes\":\"first try\"}`,
     };
     try {
