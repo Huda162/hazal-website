@@ -25,6 +25,15 @@ export default {
       scale: {
         60: "0.6",
       },
+      keyframes: {
+        zoomOut: {
+          '0%': { transform: 'scale(1.1)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+      },
+      animation: {
+        'zoomOut': 'zoomOut 1.2s ease-out forwards',
+      },
     },
   },
   variants: {

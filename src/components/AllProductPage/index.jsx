@@ -21,19 +21,22 @@ import FilterDialog from "../FilterBar/FilterDialog";
 
 export default function AllProductPage() {
   const param = useParams();
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false)
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const pageParam = searchParams.get("page");
-  const [currentPage, setCurrentPage] = useState(pageParam ? parseInt(pageParam) : 1);  const { data: data2, loading: loading2 } = useFetchData(
+  const [currentPage, setCurrentPage] = useState(
+    pageParam ? parseInt(pageParam) : 1
+  );
+  const { data: data2, loading: loading2 } = useFetchData(
     `filter_products?brand_id=${param.id}&page=${currentPage}`
   );
 
   useEffect(() => {
     applyFilters();
-  }, [currentPage]);
+  }, [currentPage, sortKeys]);
   useEffect(() => {
-    handlePageClick(currentPage)
-  }, [currentPage])
+    handlePageClick(currentPage);
+  }, [currentPage]);
 
   const onPageChange = (page) => {
     setSearchParams({ page: page.toString() });
@@ -127,7 +130,7 @@ export default function AllProductPage() {
         />
         {loadProducts ? (
           <div style={{ height: "100vh" }}>
-            <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
+            <div className="flex space-x-2 justify-center items-center bg-white h-screen  ">
               <span className="sr-only">Loading...</span>
               <div className="h-8 w-8 bg-main-color  rounded-full animate-bounce [animation-delay:-0.3s]"></div>
               <div className="h-8 w-8 bg-main-color  rounded-full animate-bounce [animation-delay:-0.1s]"></div>
@@ -171,7 +174,7 @@ export default function AllProductPage() {
                     setSortKey={setSortKey}
                     applyFilters={() => applyFilters()}
                   />
-                  <div className="grid xl:grid-cols-4 lg:grid-cols-4 sm:grid-cols-2 grid-cols-2 xl:gap-[30px] gap-5">
+                  <div className="grid xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 grid-cols-2 xl:gap-[30px] gap-5">
                     {products?.data && products.data?.length > 0 ? (
                       <DataIteration
                         datas={products.data}
@@ -179,8 +182,11 @@ export default function AllProductPage() {
                         endLength={products?.data?.length}
                       >
                         {({ datas }) => (
-                          <div   key={datas.id}>
-                            <ProductCardStyleThree datas={datas} currentPage={currentPage}/>
+                          <div key={datas.id}>
+                            <ProductCardStyleThree
+                              datas={datas}
+                              currentPage={currentPage}
+                            />
                           </div>
                         )}
                       </DataIteration>
@@ -188,7 +194,7 @@ export default function AllProductPage() {
                       <div lassName="products-page-wrapper w-full flex align-center justify-center">
                         <div className="container-x mx-auto mt-[90px] mb-[90px]">
                           <div className="flex flex-col items-center justify-center h-full">
-                            <img src={image} alt="" width={250}/>
+                            <img src={image} alt="" width={250} />
                             <p className="text-lg text-gray-500">
                               {t("no data found")}
                             </p>
@@ -220,7 +226,7 @@ export default function AllProductPage() {
           <div lassName="products-page-wrapper w-full">
             <div className="container-x mx-auto mt-[90px] mb-[90px]">
               <div className="flex flex-col items-center justify-center h-full">
-                <img src={image} alt="" width={250}/>
+                <img src={image} alt="" width={250} />
                 <p className="text-lg text-gray-500">لا يوجد بيانات لعرضها</p>
                 <p className="text-sm text-gray-400 m-3">
                   <Link to="/">اضغط هنا للعودة إلى الصفحة الرئيسية</Link>

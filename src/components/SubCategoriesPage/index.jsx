@@ -95,7 +95,7 @@ export default function SubCategoriesPage() {
 
   useEffect(() => {
     applyFilters();
-  }, [currentPage]);
+  }, [currentPage, sortKeys]);
 
   const handlePageClick = (page) => {
     setCurrentPage(page);
@@ -152,7 +152,7 @@ export default function SubCategoriesPage() {
         />
         {loading ? (
           <div style={{ height: "100vh" }}>
-            <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
+            <div className="flex space-x-2 justify-center items-center bg-white h-screen  ">
               <span className="sr-only">Loading...</span>
               <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.3s]"></div>
               <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.1s]"></div>
@@ -215,7 +215,7 @@ export default function SubCategoriesPage() {
                 <>
                   {loadProducts ? (
                     <div style={{ height: "100vh" }}>
-                      <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
+                      <div className="flex space-x-2 justify-center items-center bg-white h-screen  ">
                         <span className="sr-only">Loading...</span>
                         <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                         <div className="h-8 w-8 bg-main-color rounded-full animate-bounce [animation-delay:-0.1s]"></div>
@@ -243,7 +243,7 @@ export default function SubCategoriesPage() {
                           />
                           {data.categories?.length === 0 && (
                             <div className="flex-1">
-                              <div className="grid xl:grid-cols-4 lg:grid-cols-4 sm:grid-cols-2 grid-cols-2 xl:gap-[30px] gap-5">
+                              <div className="grid xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 grid-cols-2 xl:gap-[30px] gap-5">
                                 {products?.data &&
                                 products?.data?.length > 0 ? (
                                   <>

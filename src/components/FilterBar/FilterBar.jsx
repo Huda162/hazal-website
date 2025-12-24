@@ -4,6 +4,54 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { FilterCheckBox } from "./Checkbox";
 import AppSelect from "./FilterSelect";
+import useFetchData from "../../hooks/fetchData";
+
+// Chip component for filter options
+const FilterChip = ({ label, isSelected, onClick, disabled = false }) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`
+        px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
+        border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-main-color/50
+        ${
+          isSelected
+            ? "bg-main-color text-white border-main-color shadow-sm"
+            : "bg-white/50 text-gray-700 border-gray-300 hover:border-main-color hover:text-main-color hover:bg-main-color/5"
+        }
+        ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+      `}
+    >
+      {label}
+    </button>
+  );
+};
+
+// Multi-select chip group component
+const ChipGroup = ({
+  items,
+  selectedItems,
+  onToggle,
+  translationKey,
+  canSelectMultiple = true,
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {items.map((item) => (
+        <FilterChip
+          key={item}
+          label={t(item) || item}
+          isSelected={selectedItems.includes(item)}
+          onClick={() => onToggle(item)}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default function FilterBar({
   minValue,
@@ -18,20 +66,246 @@ export default function FilterBar({
   handleCategorySelect,
   mainCategory,
   selectedCategory,
+  selectedAgeGroups,
+  setSelectedAgeGroups,
+  selectedSeasons,
+  setSelectedSeasons,
+  selectedGender,
+  setSelectedGender,
 }) {
   const [showFilters, setShowFilters] = useState(false);
+  const [hoveredMaterial, setHoveredMaterial] = useState(null);
+
   const changePrice = (selValue) => {
     setValue(selValue);
   };
+
   const lang = localStorage.getItem("i18nextLng");
   const { t } = useTranslation();
 
+  // Define filter options
+  const ageGroups = ["0-3", "3-6", "6-9", "9-12", "12-18", "18-24", "3y", "4y"];
+  const seasons = ["spring", "summer", "autumn", "winter"];
+  const genders = ["male", "female"];
+
+  // Handle multiple selection for age groups
+  const handleAgeGroupToggle = (ageGroup) => {
+    setSelectedAgeGroups((prev) => {
+      if (prev.includes(ageGroup)) {
+        return prev.filter((item) => item !== ageGroup);
+      } else {
+        return [...prev, ageGroup];
+      }
+    });
+  };
+
+  // Handle multiple selection for seasons
+  const handleSeasonToggle = (season) => {
+    setSelectedSeasons((prev) => {
+      if (prev.includes(season)) {
+        return prev.filter((item) => item !== season);
+      } else {
+        return [...prev, season];
+      }
+    });
+  };
+
+  // Handle single selection for gender (chips with exclusive selection)
+  const handleGenderChange = (gender) => {
+    setSelectedGender(selectedGender === gender ? null : gender);
+  };
+
+  // Handle gender chip click (toggle)
+  const handleGenderToggle = (gender) => {
+    if (selectedGender === gender) {
+      setSelectedGender(null); // Deselect if clicking the same chip
+    } else {
+      setSelectedGender(gender); // Select new gender
+    }
+  };
+
+  const clearAgeGroups = () => setSelectedAgeGroups([]);
+  const clearSeasons = () => setSelectedSeasons([]);
+  const clearGender = () => setSelectedGender(null);
+
+  const clearAllFilters = () => {
+    clearAgeGroups();
+    clearSeasons();
+    clearGender();
+  };
+
   return (
     <>
-      <div className="md:block fixed bottom-6 right-6 z-40">
+      <div
+        className="xl:w-[25%] lg:w-[25%] h-fit sm:w-full hidden xl:block lg:block md:hidden bg-gradient-to-tr from-white via-main-color/10 to-main-color/50 rounded rounded-md shadow shadow-lg px-2 "
+        style={{ marginLeft: "2rem" }}
+      >
+        <div className="">
+          {withCategories && (
+            <div className="pb-6 border-b border-gray-200">
+              <h3 className="text-lg font-medium mb-3">{t("filter")}</h3>
+              <div className="p-2">
+                <AppSelect
+                  id="select"
+                  onChange={handleCategorySelect}
+                  label={t("filter")}
+                  options={[
+                    { value: "", label: `${t("all")}` },
+                    ...categories?.categories.map((item) => ({
+                      value: item.id,
+                      label:
+                        lang === "ar"
+                          ? item.name_ar
+                          : lang === "en"
+                          ? item.name_en
+                          : item.name_he,
+                    })),
+                  ]}
+                  value={selectedCategory}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="py-6 border-b border-gray-200  rounded-lg shadow-md bg-white/50 p-5 mt-2">
+            <h3 className="text-lg mb-3 font-bold">{t("Price")}</h3>
+            <div className="flex gap-4 mb-4">
+              <div className="flex-1">
+                <label
+                  htmlFor="min"
+                  className="block text-sm text-gray-600 mb-1"
+                >
+                  {t("from")}
+                </label>
+                <div className="border rounded-lg p-2 flex items-center">
+                  <span className="mr-2">₪</span>
+                  <input
+                    readOnly
+                    id="min"
+                    value={selectedValue[0]}
+                    className="w-full outline-none bg-white/50"
+                  />
+                </div>
+              </div>
+              <div className="flex-1">
+                <label
+                  htmlFor="max"
+                  className="block text-sm text-gray-600 mb-1"
+                >
+                  {t("to")}
+                </label>
+                <div className="border rounded-lg p-2 flex items-center">
+                  <span className="mr-2">₪</span>
+                  <input
+                    readOnly
+                    id="max"
+                    value={selectedValue[1]}
+                    className="w-full outline-none bg-white/50"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="px-2">
+              <div className="px-2 py-4">
+                <Slider
+                  range
+                  reverse={lang === "en" ? false : true}
+                  min={minValue}
+                  max={maxValue}
+                  value={selectedValue}
+                  onChange={changePrice}
+                  trackStyle={[
+                    {
+                      backgroundColor: "#332e2c",
+                      height: 4,
+                    },
+                  ]}
+                  handleStyle={[
+                    {
+                      borderColor: "#332e2c",
+                      backgroundColor: "#fff",
+                      borderWidth: 2,
+                      width: 20,
+                      height: 20,
+                      marginTop: -8,
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                      opacity: 1,
+                    },
+                    {
+                      borderColor: "#332e2c",
+                      backgroundColor: "#fff",
+                      borderWidth: 2,
+                      width: 20,
+                      height: 20,
+                      marginTop: -8,
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                      opacity: 1,
+                    },
+                  ]}
+                  railStyle={{
+                    backgroundColor: "#e5e7eb",
+                    height: 4,
+                  }}
+                  dotStyle={{
+                    display: "none",
+                  }}
+                  activeDotStyle={{
+                    display: "none",
+                  }}
+                />
+                <div className="flex justify-between text-sm text-gray-600 mt-3">
+                  <span>₪{selectedValue[0]}</span>
+                  <span>₪{selectedValue[1]}</span>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                applyFilters();
+                setShowFilters(false);
+              }}
+              className="w-full bg-main-color text-white py-3 rounded-lg hover:bg-main-color/80 transition-colors font-medium"
+            >
+              {t("apply")}
+            </button>
+          </div>
+
+          <div className="my-3 rounded-lg shadow-md bg-white/50 p-5">
+            <h3 className="text-lg font-bold mb-3">{t("sort")}</h3>
+            <div className="space-y-3">
+              <FilterCheckBox
+                label={t("most ordered")}
+                checked={sortKeys.most_ordered === true}
+                onChange={() => checkKey("most_ordered")}
+                id="most_ordered"
+              />
+              <FilterCheckBox
+                label={t("highest price")}
+                checked={sortKeys.sort_desc === true}
+                id="sort_desc"
+                onChange={() => checkKey("sort_desc")}
+              />
+              <FilterCheckBox
+                label={t("lowest price")}
+                checked={sortKeys.sort_asc === true}
+                id="sort_asc"
+                onChange={() => checkKey("sort_asc")}
+              />
+              <FilterCheckBox
+                label={t("latest")}
+                checked={sortKeys.latest === true}
+                id="latest"
+                onChange={() => checkKey("latest")}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="lg:hidden block fixed bottom-6 right-6 z-40">
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center justify-center gap-2 bg-secondary-color text-white py-3 px-4 rounded-full shadow-lg hover:bg-secondary-color/90 transition-colors"
+          className="flex items-center justify-center gap-2 bg-main-color text-white py-3 px-4 rounded-full shadow-lg hover:bg-secondary-color/90 transition-colors"
         >
           {showFilters ? (
             <svg
@@ -161,13 +435,13 @@ export default function FilterBar({
                     onChange={changePrice}
                     trackStyle={[
                       {
-                        backgroundColor: "#b58640",
+                        backgroundColor: "#332e2c",
                         height: 4,
                       },
                     ]}
                     handleStyle={[
                       {
-                        borderColor: "#b58640",
+                        borderColor: "#332e2c",
                         backgroundColor: "#fff",
                         borderWidth: 2,
                         width: 20,
@@ -177,7 +451,7 @@ export default function FilterBar({
                         opacity: 1,
                       },
                       {
-                        borderColor: "#b58640",
+                        borderColor: "#332e2c",
                         backgroundColor: "#fff",
                         borderWidth: 2,
                         width: 20,
@@ -192,10 +466,10 @@ export default function FilterBar({
                       height: 4,
                     }}
                     dotStyle={{
-                      display: "none", // Hide the default dots
+                      display: "none",
                     }}
                     activeDotStyle={{
-                      display: "none", // Hide the active dots
+                      display: "none",
                     }}
                   />
                   <div className="flex justify-between text-sm text-gray-600 mt-3">
@@ -241,7 +515,7 @@ export default function FilterBar({
                 applyFilters();
                 setShowFilters(false);
               }}
-              className="w-full bg-main-color text-white py-3 rounded-lg hover:bg-main-color/80 transition-colors"
+              className="w-full bg-main-color text-white py-3 rounded-lg hover:bg-main-color/80 transition-colors font-medium"
             >
               {t("apply")}
             </button>

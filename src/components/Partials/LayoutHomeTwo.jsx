@@ -22,11 +22,9 @@ export default function LayoutHomeTwo({ children, childrenClasses }) {
   const { data, loading } = useFetchData("socials");
 
   useEffect(() => {
-    // Check if user is on a mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     if (isMobile) {
-      // Detect specific device type
       if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         setDeviceType("ios");
       } else if (/Android/i.test(navigator.userAgent)) {
@@ -45,7 +43,6 @@ export default function LayoutHomeTwo({ children, childrenClasses }) {
 
   return (
     <>
-      {/* Mobile App Download Alert */}
       {showMobileAlert && (
         <div
           className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-md
