@@ -188,7 +188,10 @@ function ProductCardStyleThree({ datas, currentPage }) {
 
   return (
     <>
-      <div className="product-card w-full bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-full">
+      <div
+        className="product-card w-full bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-full 
+    transition-all duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-xl items-center justify-between"
+      >
         <div className="w-full h-[220px] xl:h-[280px] md:h-[230px] xl:bg-white mb relative overflow-hidden rounded-lg">
           {datas.available === false && (
             <div
@@ -244,7 +247,7 @@ function ProductCardStyleThree({ datas, currentPage }) {
                       <img
                         src={image.url}
                         alt={`Product image ${index + 1}`}
-                        className="xl:max-h-[240px] rounded-md xl:max-w-[240px] md:max-w-[200px] md:max-h-[200px] m-auto"
+                        className="xl:max-h-[240px] rounded-md xl:max-w-[240px] md:max-w-[200px] md:max-h-[200px]  object-cover m-auto p-1"
                       />
                     </div>
                   ))}
@@ -257,7 +260,7 @@ function ProductCardStyleThree({ datas, currentPage }) {
                     e.target.src = logo;
                   }}
                   alt=""
-                  className="xl:min-h-[270px] rounded-md xl:min-w-[270px] md:min-w-[200px] md:min-h-[200px] w-[200px] h-[200px] m-auto object-fill p-1"
+                  className="xl:min-h-[270px] rounded-md xl:min-w-[270px] md:min-w-[200px] md:min-h-[200px] w-[200px] h-[200px] m-auto object-cover p-1"
                 />
               )}
             </div>
@@ -332,10 +335,7 @@ function ProductCardStyleThree({ datas, currentPage }) {
             ) : (
               <button
                 type="button"
-                className={`rounded-lg px-1 md:px-0 w-[100%] flex justify-center items-center ml-1 transition-all duration-200 ${
-                  
-                   "bg-main-color text-white hover:bg-main-color-dark"
-                }`}
+                className={`rounded-lg px-1 md:px-0 w-[100%] flex justify-center items-center ml-1 transition-all duration-200 bg-gradient-to-bl from-main-color to-secondary-color text-white hover:bg-main-color-dark`}
                 onClick={() => {
                   if (
                     datas.product_sizes?.length > 0 ||
@@ -356,11 +356,10 @@ function ProductCardStyleThree({ datas, currentPage }) {
               >
                 <div className="flex items-center space-x-2">
                   <span className="xl:text-[14px] text-[12px]">
-                    
-                      <div className="flex items-center justify-center gap-1">
-                        <img src={cart_add} width={18} />
-                        <p className="hidden md:block">{t("Add to cart")}</p>
-                      </div>
+                    <div className="flex items-center justify-center gap-1">
+                      <img src={cart_add} width={18} />
+                      <p className="hidden md:block">{t("Add to cart")}</p>
+                    </div>
                   </span>
                 </div>
               </button>

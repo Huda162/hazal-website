@@ -176,7 +176,7 @@ export default function CheakoutPage() {
     try {
       // API call using axios
       const response = await axios.post(
-        `https://actionmobileps.com/admin/api/copons/check`,
+        `https://hazal.ps/admin/api/copons/check`,
         { code: coupon },
         {
           headers: {
@@ -308,7 +308,7 @@ export default function CheakoutPage() {
     } else {
       try {
         const response = await axios.get(
-          `https://actionmobileps.com/admin/api/check_phone?phone=05${phone}`
+          `https://hazal.ps/admin/api/check_phone?phone=05${phone}`
         );
         console.log(response.data.message);
         if (response.data.message === "Phone number is available.") {
@@ -379,7 +379,7 @@ export default function CheakoutPage() {
     formData.append("role_id", 2);
 
     const resGet = await axios
-      .post(`https://actionmobileps.com/admin/api/register`, formData)
+      .post(`https://hazal.ps/admin/api/register`, formData)
       .then((response) => {
         login();
       })
@@ -519,7 +519,7 @@ export default function CheakoutPage() {
     try {
       const fullPhone = "05" + phone;
       const response = await axios.post(
-        `https://actionmobileps.com/admin/api/login`,
+        `https://hazal.ps/admin/api/login`,
         {
           phone: fullPhone,
           password: password,

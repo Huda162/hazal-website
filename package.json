@@ -21,6 +21,7 @@
     "i18next": "^23.10.0",
     "i18next-browser-languagedetector": "^7.2.0",
     "lottie-react": "^2.4.1",
+    "lucide-react": "^0.562.0",
     "phosphor-icons": "^1.4.2",
     "prop-types": "^15.8.1",
     "rc-slider": "^11.1.6",
